@@ -6,9 +6,11 @@ namespace Neofilia.Domain;
 //Locale must have many Tables
 //Locale may have many Menus
 //Locale may have an UserManager
-//how should the global game be implemented? 
+//how should the global game be implemented?
+//gala gay
 public class Locale
 {
+    public int GalAgay { get; set; }
     public record struct LocaleId(int Id);
     public LocaleId Id { get; private set; }
     public Guid? ManagerId { get; private set; }
