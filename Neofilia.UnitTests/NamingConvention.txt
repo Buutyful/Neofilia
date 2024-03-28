@@ -1,0 +1,7 @@
+﻿
+
+Test naming convention: SUT_WhenX_ShouldY
+
+SUT: system under test
+WhenX: X is the scenario we are testing
+ShouldY: Y is the outcome we expecting
