@@ -5,7 +5,9 @@ namespace Neofilia.Domain;
 //Table is an entity, must be accessed only inside Local aggregate boundry
 //Evrey table will subscribe to the game event ? or the user should? or the local should?
 //Table may have many local games
-//Table may have many partecipants : how to implement this? table should host a lobby?
+//Table may have many partecipants
+//(current idea: table is a lobby it self, when partecipants win the on going challenge they add score points to the table lobby,
+//when a trashold is reached the table creates a reward that can be redeemed, table can have only 1 reward)
 //Table may own one reward
 
 public class Table
