@@ -15,7 +15,7 @@ public class RewardTests
     }
 
     [Fact]
-    public void ReedemReward_WhenIsReedemed_ShouldBeSetRedeemedToTrue()
+    public void ReedemReward_WhenIsReedemed_ShouldSetRedeemedToTrue()
     {
         //Arrange
         var reward = Reward.NewMoneyReward(5.255m);

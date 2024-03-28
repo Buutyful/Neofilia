@@ -25,7 +25,6 @@ public class Table : IEquatable<Table>
 
     public Table(LocalId localId, int tableNumber) => 
         (LocalId, TableNumber) = (localId, tableNumber);
-
     public void AddPartecipant(Guid userId) => UsersId.Add(userId);
     public void RemovePartecipant(Guid userId) => UsersId.Remove(userId);
     public bool Equals(Table? other) =>
@@ -35,6 +34,12 @@ public class Table : IEquatable<Table>
     public static bool operator ==(Table left, Table right) => left.Equals(right);
     public static bool operator !=(Table left, Table right) => !left.Equals(right);
     public override int GetHashCode() => Id.GetHashCode();
-   
 
+    private Table(TableId id, LocalId localId, int tableNumber) =>
+        (Id, LocalId, TableNumber) = (id, localId, tableNumber);
+    private Table(TableId id) => Id = id;
+    public static Table CreateTestTable(TableId id, LocalId localId, int tableNumber) =>
+        new(id, localId, tableNumber);
+    public static Table CreateTestTableId(TableId id) =>
+       new(id);
 }
