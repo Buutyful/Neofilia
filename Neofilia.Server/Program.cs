@@ -1,10 +1,5 @@
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Neofilia.Server;
 using Neofilia.Server.Components;
-using Neofilia.Server.Components.Account;
-using Neofilia.Server.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

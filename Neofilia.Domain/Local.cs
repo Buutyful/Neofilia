@@ -10,7 +10,9 @@ namespace Neofilia.Domain;
 
 public class Local
 {
-    public record struct LocalId(int Id);
+    private Local() { } //ef ctor
+    
+    public readonly record struct LocalId(int Id);
     public LocalId Id { get; private set; } //PK
     public Guid? ManagerId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED
     public NotEmptyString Name { get; private set; }

@@ -2,18 +2,20 @@
 
 
 namespace Neofilia.Domain;
-//Table is an entity, accessible inside Local aggregate boundry
-//Table must have a global Local game
+//Table is an entity, must be accessed only inside Local aggregate boundry
+//Evrey table will subscribe to the game event ? or the user should? or the local should?
 //Table may have many local games
 //Table may have many partecipants : how to implement this? table should host a lobby?
+//Table may own one reward
 
 public class Table
 {
-    public record struct TableId(int Id);
+    private Table() { } //ef ctor
+    public readonly record struct TableId(int Id);
     public TableId Id { get; private set; } //PK
     public LocalId LocalId { get; private set; } //FK: Locals{ID}, REQUIRED
     public int TableNumber { get; private set; } //should this match the id?
-
+    public Reward? Reward { get; private set; }
 
     //navigation
     public ICollection<Guid> UsersId { get; private set; } = [];
