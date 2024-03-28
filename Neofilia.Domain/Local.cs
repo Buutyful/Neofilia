@@ -3,9 +3,9 @@ using static Neofilia.Domain.Table;
 
 namespace Neofilia.Domain;
 //Aggregate root
-//Locale must have many Tables
-//Locale may have many Menus
-//UserManager may have many Locale
+//Local must have many Tables
+//Local may have many Menus
+//UserManager may have many Locals
 //how should the global game be implemented?
 
 public class Local
