@@ -16,7 +16,7 @@ public class Local
     public LocalId Id { get; private set; } //PK
     public Guid? ManagerId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED
     public NotEmptyString Name { get; private set; }
-    public Adress Adress { get; private set; }
+    public Address Adress { get; private set; }
     public DateTimeOffset EventStartsAt { get; private set; }
     public DateTimeOffset EventEndsAt { get; private set; }
 
@@ -29,7 +29,7 @@ public class Local
     public Local(
         Guid manager,
         string name,
-        Adress adress,
+        Address adress,
         DateTimeOffset eventStartsAt,
         DateTimeOffset eventEndsAt,
         ICollection<Table> tables,
@@ -38,7 +38,7 @@ public class Local
         ManagerId = manager;
         Name = new NotEmptyString(name);
         Adress = adress;
-        if (EventStartsAt < EventEndsAt)
+        if (eventStartsAt > eventEndsAt)
             throw new InvalidOperationException("Event needs to start before it ends");
         EventStartsAt = eventStartsAt;
         EventEndsAt = eventEndsAt;
@@ -96,4 +96,4 @@ public readonly record struct NotEmptyString(string Value)
     public static implicit operator string(NotEmptyString value) => value.Value;
 }
 
-public record Adress(NotEmptyString Street, NotEmptyString CivilNumber, NotEmptyString PhoenNumber);
+public record Address(NotEmptyString Street, NotEmptyString CivilNumber, NotEmptyString PhoenNumber);
