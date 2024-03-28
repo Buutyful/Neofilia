@@ -10,7 +10,7 @@ namespace Neofilia.Domain;
 //when a trashold is reached the table creates a reward that can be redeemed, table can have only 1 reward)
 //Table may own one reward
 
-public class Table
+public class Table : IEquatable<Table>
 {
     private Table() { } //ef ctor
     public readonly record struct TableId(int Id);
@@ -28,11 +28,12 @@ public class Table
 
     public void AddPartecipant(Guid userId) => UsersId.Add(userId);
     public void RemovePartecipant(Guid userId) => UsersId.Remove(userId);
-    public bool Equals(Table other) =>
-        other != null && Id.Equals(other.Id);
+    public bool Equals(Table? other) =>
+        other is not null && Id.Equals(other.Id);
     public override bool Equals(object? obj) =>
         obj is Table table && Equals(table);
-
+    public static bool operator ==(Table left, Table right) => left.Equals(right);
+    public static bool operator !=(Table left, Table right) => !left.Equals(right);
     public override int GetHashCode() => Id.GetHashCode();
    
 
