@@ -17,6 +17,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Neofilia.Contracts\Neofilia.Contracts.csproj" />
+    <ProjectReference Include="..\Neofilia.Domain\Neofilia.Domain.csproj" />
+    <ProjectReference Include="..\Neofilia.Server\Neofilia.Server.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
