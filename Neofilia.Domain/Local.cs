@@ -11,7 +11,7 @@ namespace Neofilia.Domain;
 public class Local
 {
     private Local() { } //ef ctor
-    
+
     public readonly record struct LocalId(int Id);
     public LocalId Id { get; private set; } //PK
     public Guid? ManagerId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED
@@ -51,23 +51,34 @@ public class Local
     public void AddTable(Table table)
     {
         if (Tables.Any(t => t.Equals(table)))
-            throw new InvalidOperationException("cant have the same table two times");
+            throw new InvalidOperationException("cant have the same table two times: At(AddTable)");
         Tables.Add(table);
     }
     public void RemoveTable(TableId tableId)
     {
-        var table = Tables.Where(t => t.Id == tableId).First();
+        var table = Tables.FirstOrDefault(t => t.Id == tableId) ??
+            throw new InvalidOperationException("Table with given id was not found: At(RemoveTable)");
         Tables.Remove(table);
     }
     public void AddPartecipantToTable(Guid partecipantId, Table table)
     {
         if (Tables.Any(t => t.PartecipantsId
                   .Any(id => id == partecipantId)))
-            throw new InvalidOperationException("user already partecipating to an other table");
-        table.AddPartecipant(partecipantId);
+            throw new InvalidOperationException("user already partecipating to an other table: At(AddPartecipantToTable)");
+        
+        var localTable = Tables.FirstOrDefault(t => t.Equals(table))
+            ?? throw new InvalidOperationException("given table was not found in local: At(AddPartecipantToTable)");
+        
+        localTable.AddPartecipant(partecipantId);
     }
-    public void RemovePartecipantFromTable(Guid partecipantId, Table table) => 
-        table.RemovePartecipant(partecipantId);
+    public void RemovePartecipantFromTable(Guid partecipantId, Table table)
+    {
+        var localTable = Tables.FirstOrDefault(t => t.Equals(table))
+            ?? throw new InvalidOperationException("given table was not found in local");
+
+        localTable.RemovePartecipant(partecipantId);
+    }
+
     #endregion
 
     public void AddMenu(MenuId menuId)

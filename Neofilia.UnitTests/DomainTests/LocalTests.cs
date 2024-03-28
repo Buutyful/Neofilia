@@ -36,6 +36,7 @@ public class LocalTests
     private static readonly Address _adress = new Address(new NotEmptyString("test"),
                                                           new NotEmptyString("test"),
                                                           new NotEmptyString("test"));
+    
     [Fact]
     public void CreateLocal_WhenEventEndGreaterThenEventStart_ShouldThrow()
     {
@@ -52,5 +53,56 @@ public class LocalTests
                       _tables,
                       _menusId);
         });
+    }
+
+    [Fact]
+    public void AddTable_WhenTableAlreadyExists_ShouldThrow()
+    {
+        //Arrange
+        var table = Table.CreateTestTable(new Table.TableId(1), new Local.LocalId(1), 1);
+        var local = CreateTestLocal();
+        //Act and Assert
+        Assert.Throws<InvalidOperationException>(() => 
+        {
+            local.AddTable(table);
+        });
+    }
+
+    [Fact]
+    public void AddPartecipantToTable_WhenPartecipantIsAlreadyInAnyOtherTable_ShouldThrow()
+    {
+        //Arrange
+        var guid = Guid.NewGuid();
+        var table = Table.CreateTestTable(new Table.TableId(1), new Local.LocalId(1), 1);
+        var local = CreateTestLocal();
+        local.AddPartecipantToTable(guid, table);
+        //Act and Assert
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            local.AddPartecipantToTable(guid, table);
+        });
+    }
+    [Fact]
+    public void AddPartecipantToTable_WhenTableIsNotFoundInLocal_ShouldThrow()
+    {
+        //Arrange
+        var guid = Guid.NewGuid();
+        var table = Table.CreateTestTable(new Table.TableId(15), new Local.LocalId(1), 1);
+        var local = CreateTestLocal();       
+        //Act and Assert
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            local.AddPartecipantToTable(guid, table);
+        });
+    }
+    private Local CreateTestLocal()
+    {
+        return new Local(Guid.NewGuid(),
+                         "test",
+                         _adress,
+                         DateTimeOffset.Now,
+                         DateTimeOffset.Now.AddHours(5),
+                         _tables,
+                         _menusId);
     }
 }
