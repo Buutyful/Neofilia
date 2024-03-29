@@ -29,7 +29,7 @@ public class Local
     public Local(
         Guid manager,
         string name,
-        Address adress,
+        Address address,
         DateTimeOffset eventStartsAt,
         DateTimeOffset eventEndsAt,
         ICollection<Table> tables,
@@ -37,7 +37,7 @@ public class Local
     {
         ManagerId = manager;
         Name = new NotEmptyString(name);
-        Address = adress;
+        Address = address;
         if (eventStartsAt > eventEndsAt)
             throw new InvalidOperationException("Event needs to start before it ends");
         EventStartsAt = eventStartsAt;
@@ -103,8 +103,8 @@ public readonly record struct NotEmptyString(string Value)
         !string.IsNullOrWhiteSpace(Value) ? Value.Trim()
         : throw new ArgumentException("Value cannot be null or white space", nameof(Value));
     public NotEmptyString() : this(string.Empty) { } //throw if called
-
+    //when creating migration ef will call this and cause exe, just comment it off
     public static implicit operator string(NotEmptyString value) => value.Value;
 }
 
-public record Address(NotEmptyString Street, NotEmptyString CivilNumber, NotEmptyString PhoenNumber);
+public record Address(NotEmptyString Street, NotEmptyString CivilNumber, NotEmptyString PhoneNumber);
