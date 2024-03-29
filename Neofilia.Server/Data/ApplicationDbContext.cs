@@ -9,8 +9,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new LocalConfig());
-        modelBuilder.ApplyConfiguration(new TableConfig());
-        modelBuilder.ApplyConfiguration(new MenuConfig());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);       
     }
 }

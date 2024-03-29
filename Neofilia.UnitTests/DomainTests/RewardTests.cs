@@ -1,4 +1,5 @@
 using Neofilia.Domain;
+using static Neofilia.Domain.Table;
 
 namespace Neofilia.UnitTests.DomainTests;
 
@@ -8,7 +9,7 @@ public class RewardTests
     public void ReedemReward_WhenIsAlreadyReedemed_ShouldThrowInvalidOperation()
     {
         //Arrange
-        var reward = Reward.NewMoneyReward(5.255m);
+        var reward = Reward.NewMoneyReward(5.255m, new TableId(5));
         reward.Redeem();
         // Act and Assert
         Assert.Throws<InvalidOperationException>(() => reward.Redeem());
@@ -18,7 +19,7 @@ public class RewardTests
     public void ReedemReward_WhenIsReedemed_ShouldSetRedeemedToTrue()
     {
         //Arrange
-        var reward = Reward.NewMoneyReward(5.255m);
+        var reward = Reward.NewMoneyReward(5.255m, new TableId(5));
         //Act
         reward.Redeem();
         //Assert
@@ -29,7 +30,7 @@ public class RewardTests
     public void ReedemReward_WhenIsReedemed_ShouldSetRedeemedAtDateCorrectly()
     {
         //Arrange
-        var reward = Reward.NewMoneyReward(5.255m);
+        var reward = Reward.NewMoneyReward(5.255m, new TableId(5));
         var now = DateTimeOffset.Now;
         //Act
         reward.Redeem();

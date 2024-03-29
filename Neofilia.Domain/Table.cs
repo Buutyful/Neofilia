@@ -3,12 +3,13 @@
 
 namespace Neofilia.Domain;
 //Table is an entity, must be accessed only inside Local aggregate boundry
-//Evrey table will subscribe to the game event ? or the user should? or the local should?
-//Table may have many local games
+
+//Table may have one reward
 //Table may have many partecipants
-//(current idea: table is a lobby it self, when partecipants win the on going challenge they add score points to the table lobby,
-//when a trashold is reached the table creates a reward that can be redeemed, table can have only 1 reward)
-//Table may own one reward
+// ?? Table may have many local games ?? not now, maybe future feature
+
+//current idea: table is a lobby it self, when partecipants gain points on the runing challenge they add score points to the table lobby,
+//when a threshold is reached the table creates a reward that can be redeemed, table can have only 1 reward at a time)
 
 public class Table : IEquatable<Table>
 {
@@ -17,9 +18,9 @@ public class Table : IEquatable<Table>
     public TableId Id { get; private set; } //PK
     public LocalId LocalId { get; private set; } //FK: Locals{ID}, REQUIRED
     public int TableNumber { get; private set; } //should this match the id?
-    public Reward? Reward { get; private set; }
 
     //navigation
+    public Reward? Reward { get; private set; }
     public ICollection<Guid> UsersId { get; private set; } = [];
     public IEnumerable<Guid> PartecipantsId => UsersId;
 

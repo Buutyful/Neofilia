@@ -1,25 +1,33 @@
-﻿namespace Neofilia.Domain;
+﻿using System.Reflection.Metadata.Ecma335;
+using static Neofilia.Domain.Table;
+
+namespace Neofilia.Domain;
 
 //use local time?
+//should a local have his own rewards?
+//should a reward be a base class for other rewards?
 public class Reward
 {
     private Reward() { } //ef ctor
     public readonly record struct RewardId(int Id);
     public RewardId Id { get; private set; } //PK
+    public TableId TableId { get; private set; } //FK: Tables{ID}, REQUIRED
     public RewardType Type { get; private set; } = RewardType.None;
     public Money? Money { get; init; }
     public bool IsRedeemed { get; private set; }
     public DateTimeOffset GeneratedAt { get; private set; }
     public DateTimeOffset RedeemedAt { get; private set; }
 
-    public Reward(RewardType type)
+    public Reward(RewardType type, TableId tableId)
     {
         Type = type;
+        TableId = tableId;
         GeneratedAt = DateTimeOffset.Now;
     }
-    private Reward(RewardType type, Money money)
+    private Reward(RewardType type, TableId tableId, Money money)
     {
         Type = type;
+        TableId = tableId;
         GeneratedAt = DateTimeOffset.Now;
         Money = money;
     }
@@ -30,8 +38,8 @@ public class Reward
         IsRedeemed = true;
         RedeemedAt = DateTimeOffset.Now;
     }
-    public static Reward NewMoneyReward(decimal amount) =>
-        new(RewardType.Money, new Money(amount));
+    public static Reward NewMoneyReward(decimal amount, TableId tableId) =>
+        new(RewardType.Money, tableId, new Money(amount));
 }
 
 public enum RewardType
@@ -42,10 +50,10 @@ public enum RewardType
 }
 public record Money
 {
-    public decimal Amount { get; }   
+    public decimal Amount { get; }
     public Money(decimal amount)
     {
-        if(amount < 0) throw new InvalidOperationException("Money amount cannot be negative");
+        if (amount < 0) throw new InvalidOperationException("Money amount cannot be negative");
         Amount = Math.Round(amount, 2);
     }
 }
