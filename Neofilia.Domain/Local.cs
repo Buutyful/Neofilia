@@ -16,7 +16,7 @@ public class Local
     public LocalId Id { get; private set; } //PK
     public Guid? ManagerId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED
     public NotEmptyString Name { get; private set; }
-    public Address Adress { get; private set; }
+    public Address Address { get; private set; }
     public DateTimeOffset EventStartsAt { get; private set; }
     public DateTimeOffset EventEndsAt { get; private set; }
 
@@ -37,7 +37,7 @@ public class Local
     {
         ManagerId = manager;
         Name = new NotEmptyString(name);
-        Adress = adress;
+        Address = adress;
         if (eventStartsAt > eventEndsAt)
             throw new InvalidOperationException("Event needs to start before it ends");
         EventStartsAt = eventStartsAt;

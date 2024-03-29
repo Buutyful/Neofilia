@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using static Neofilia.Domain.Table;
+﻿using static Neofilia.Domain.Table;
 
 namespace Neofilia.Domain;
 
@@ -13,7 +12,7 @@ public class Reward
     public RewardId Id { get; private set; } //PK
     public TableId TableId { get; private set; } //FK: Tables{ID}, REQUIRED
     public RewardType Type { get; private set; } = RewardType.None;
-    public Money? Money { get; init; }
+    public Money Money { get; init; }
     public bool IsRedeemed { get; private set; }
     public DateTimeOffset GeneratedAt { get; private set; }
     public DateTimeOffset RedeemedAt { get; private set; }
@@ -22,6 +21,7 @@ public class Reward
     {
         Type = type;
         TableId = tableId;
+        Money = new Money(0);
         GeneratedAt = DateTimeOffset.Now;
     }
     private Reward(RewardType type, TableId tableId, Money money)
@@ -48,6 +48,8 @@ public enum RewardType
     Drink,
     Money
 }
+
+
 public record Money
 {
     public decimal Amount { get; }

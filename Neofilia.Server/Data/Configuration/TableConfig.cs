@@ -8,6 +8,11 @@ public class TableConfig : IEntityTypeConfiguration<Table>
 {
     public void Configure(EntityTypeBuilder<Table> builder)
     {
-        throw new NotImplementedException();
+        builder.HasKey(x => x.Id);
+
+        builder.Property(c => c.Id)
+               .HasConversion(
+                table => table.Id,
+                value => new Table.TableId(value));
     }
 }
