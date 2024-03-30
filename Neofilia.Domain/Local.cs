@@ -14,7 +14,7 @@ public class Local
 
     public readonly record struct LocalId(int Id);
     public LocalId Id { get; private set; } //PK
-    public Guid? ManagerId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED
+    public Guid? ApplicationUserId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED
     public NotEmptyString Name { get; private set; }
     public Address Address { get; private set; }
     public DateTimeOffset EventStartsAt { get; private set; }
@@ -22,9 +22,9 @@ public class Local
 
     //navigation
     public ICollection<Table> Tables { get; private set; } = [];
-    public ICollection<MenuId> Menus { get; private set; } = [];
+    public ICollection<Menu> Menus { get; private set; } = [];
     public IEnumerable<Table> GetTables => Tables;
-    public IEnumerable<MenuId> MenuIds => Menus;
+    public IEnumerable<Menu> GetMenus => Menus;
 
     public Local(
         Guid manager,
@@ -33,9 +33,9 @@ public class Local
         DateTimeOffset eventStartsAt,
         DateTimeOffset eventEndsAt,
         ICollection<Table> tables,
-        ICollection<MenuId> menuIds)
+        ICollection<Menu> menuIds)
     {
-        ManagerId = manager;
+        ApplicationUserId = manager;
         Name = new NotEmptyString(name);
         Address = address;
         if (eventStartsAt > eventEndsAt)
@@ -81,15 +81,15 @@ public class Local
 
     #endregion
 
-    public void AddMenu(MenuId menuId)
+    public void AddMenu(Menu menu)
     {
-        if (Menus.Contains(menuId))
+        if (Menus.Any(m => m.Id.Equals(menu.Id)))
             throw new InvalidOperationException("cant have the same menu two times");
-        Menus.Add(menuId);
+        Menus.Add(menu);
     }
     public void RemoveMenu(MenuId menuId)
     {
-        var menu = Menus.Where(m => m == menuId).First();
+        var menu = Menus.Where(m => m.Id.Equals(menuId)).First();
         Menus.Remove(menu);
     }
     public void ChangeEventStartDate(DateTimeOffset date) => EventStartsAt = date;
@@ -102,8 +102,8 @@ public readonly record struct NotEmptyString(string Value)
     public string Value { get; init; } =
         !string.IsNullOrWhiteSpace(Value) ? Value.Trim()
         : throw new ArgumentException("Value cannot be null or white space", nameof(Value));
-    public NotEmptyString() : this(string.Empty) { } //throw if called
-    //when creating migration ef will call this and cause exe, just comment it off
+    public NotEmptyString() : this("NoData") { } 
+    
     public static implicit operator string(NotEmptyString value) => value.Value;
 }
 

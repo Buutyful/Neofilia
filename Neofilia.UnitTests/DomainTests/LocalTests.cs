@@ -27,12 +27,7 @@ public class LocalTests
         Menu.CreateTestMenu(new Menu.MenuId(3), null),
         Menu.CreateTestMenu(new Menu.MenuId(4), new Uri("http://example.com")),
     };
-    private static readonly List<Menu.MenuId> _menusId = new()
-    {
-        new Menu.MenuId(1),
-        new Menu.MenuId(2),
-        new Menu.MenuId(13)
-    };
+
     private static readonly Address _adress = new Address(new NotEmptyString("test"),
                                                           new NotEmptyString("test"),
                                                           new NotEmptyString("test"));
@@ -51,7 +46,7 @@ public class LocalTests
                       currentTime,
                       currentTime.AddHours(-5),
                       _tables,
-                      _menusId);
+                      _menus);
         });
     }
 
@@ -103,6 +98,6 @@ public class LocalTests
                          DateTimeOffset.Now,
                          DateTimeOffset.Now.AddHours(5),
                          _tables,
-                         _menusId);
+                         _menus);
     }
 }

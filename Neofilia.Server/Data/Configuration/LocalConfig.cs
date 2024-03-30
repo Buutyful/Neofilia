@@ -31,5 +31,20 @@ public class LocalConfig : IEntityTypeConfiguration<Local>
                 .HasColumnName("PhoneNumber")
                 .ConfigureNotEmptyString();
         });
+
+        builder.HasMany(t => t.Tables)
+               .WithOne()
+               .HasForeignKey(t => t.LocalId);
+
+        builder.OwnsMany(m => m.Menus, menuBuilder =>
+        {
+            menuBuilder.ToTable("Menus");
+            menuBuilder.HasKey(x => x.Id);
+            menuBuilder.Property(c => c.Id)
+                       .HasConversion(
+                        menuId => menuId.Id,
+                        value => new Menu.MenuId(value));
+            menuBuilder.WithOwner().HasForeignKey(t => t.LocalId);
+        });
     }
 }
