@@ -33,8 +33,8 @@ public class LocalConfig : IEntityTypeConfiguration<Local>
         });
 
         builder.HasMany(t => t.Tables)
-               .WithOne()
-               .HasForeignKey(t => t.LocalId);
+               .WithOne();
+               
 
         builder.OwnsMany(m => m.Menus, menuBuilder =>
         {

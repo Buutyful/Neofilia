@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Neofilia.Domain;
-using System.Reflection.Emit;
+
 
 namespace Neofilia.Server.Data.Configuration;
 
@@ -29,6 +29,11 @@ public class TableConfig : IEntityTypeConfiguration<Table>
                          .HasConversion(
                           rewardId => rewardId.Id,
                           value => new Reward.RewardId(value));
+
+            rewardBuilder.Property(r => r.Type)
+                         .HasConversion(
+                          type => type.ToString(),
+                          value => (RewardType)Enum.Parse(typeof(RewardType), value));
 
             rewardBuilder.Property(c => c.Money)
                          .HasConversion(

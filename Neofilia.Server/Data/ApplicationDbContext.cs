@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Neofilia.Domain;
@@ -13,7 +14,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+    {       
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);       
     }
 }
