@@ -1,4 +1,5 @@
-﻿using static Neofilia.Domain.Menu;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using static Neofilia.Domain.Menu;
 using static Neofilia.Domain.Table;
 
 namespace Neofilia.Domain;
@@ -14,7 +15,7 @@ public class Local
 
     public readonly record struct LocalId(int Id);
     public LocalId Id { get; private set; } //PK
-    public Guid? ApplicationUserId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED
+    public Guid? ManagerId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED
     public NotEmptyString Name { get; private set; }
     public Address Address { get; private set; }
     public DateTimeOffset EventStartsAt { get; private set; }
@@ -24,6 +25,7 @@ public class Local
     public ICollection<Table> Tables { get; private set; } = [];
     public ICollection<Menu> Menus { get; private set; } = [];
     public IEnumerable<Table> GetTables => Tables;
+    [NotMapped]
     public IEnumerable<Menu> GetMenus => Menus;
 
     public Local(
@@ -35,7 +37,7 @@ public class Local
         ICollection<Table> tables,
         ICollection<Menu> menuIds)
     {
-        ApplicationUserId = manager;
+        ManagerId = manager;
         Name = new NotEmptyString(name);
         Address = address;
         if (eventStartsAt > eventEndsAt)

@@ -39,12 +39,16 @@ public class LocalConfig : IEntityTypeConfiguration<Local>
         builder.OwnsMany(m => m.Menus, menuBuilder =>
         {
             menuBuilder.ToTable("Menus");
-            menuBuilder.HasKey(x => x.Id);
+
+            menuBuilder.HasKey("Id", "LocalId");
+
+            menuBuilder.WithOwner()
+                       .HasForeignKey(t => t.LocalId);
+
             menuBuilder.Property(c => c.Id)
                        .HasConversion(
                         menuId => menuId.Id,
                         value => new Menu.MenuId(value));
-            menuBuilder.WithOwner().HasForeignKey(t => t.LocalId);
         });
     }
 }

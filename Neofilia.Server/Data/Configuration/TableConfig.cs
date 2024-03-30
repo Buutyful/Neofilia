@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Neofilia.Domain;
+using System.Reflection.Emit;
 
 namespace Neofilia.Server.Data.Configuration;
 
@@ -14,5 +15,25 @@ public class TableConfig : IEntityTypeConfiguration<Table>
                .HasConversion(
                 table => table.Id,
                 value => new Table.TableId(value));
+
+        builder.OwnsOne(t => t.Reward, rewardBuilder =>
+        {
+            rewardBuilder.ToTable("Rewards");
+
+            rewardBuilder.HasKey("Id", "TableId");
+
+            rewardBuilder.WithOwner()
+                         .HasForeignKey(r => r.TableId);
+
+            rewardBuilder.Property(c => c.Id)
+                         .HasConversion(
+                          rewardId => rewardId.Id,
+                          value => new Reward.RewardId(value));
+
+            rewardBuilder.Property(c => c.Money)
+                         .HasConversion(
+                          money => money.Amount,
+                          value => new Money(value));
+        });
     }
 }
