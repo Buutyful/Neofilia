@@ -15,8 +15,9 @@ public class Local
     private Local() { } //ef ctor
 
     public readonly record struct LocalId(int Id);
+    //public readonly record struct ManagerId(string Id);
     public LocalId Id { get; private set; } //PK
-    public Guid? ManagerId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED
+    public string ApplicationUserId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED
     public NotEmptyString Name { get; private set; }
     public Address Address { get; private set; }
     public DateTimeOffset EventStartsAt { get; private set; }
@@ -27,7 +28,7 @@ public class Local
     public IReadOnlyList<Menu> Menus => _menus.AsReadOnly();
 
     public Local(
-        Guid manager,
+        string manager,
         string name,
         Address address,
         DateTimeOffset eventStartsAt,
@@ -35,7 +36,7 @@ public class Local
         ICollection<Table> tables,
         ICollection<Menu> menuIds)
     {
-        ManagerId = manager;
+        ApplicationUserId = manager;
         Name = new NotEmptyString(name);
         Address = address;
         if (eventStartsAt > eventEndsAt)

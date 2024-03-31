@@ -40,7 +40,7 @@ public class LocalTests
         // Act and Assert
         var exception = Assert.Throws<InvalidOperationException>(() =>
         {
-            new Local(Guid.NewGuid(),
+            new Local("test",
                       "test",
                       _adress,
                       currentTime,
@@ -92,7 +92,7 @@ public class LocalTests
     }
     private Local CreateTestLocal()
     {
-        return new Local(Guid.NewGuid(),
+        return new Local("test",
                          "test",
                          _adress,
                          DateTimeOffset.Now,

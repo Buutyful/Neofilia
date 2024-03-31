@@ -14,6 +14,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {       
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+        modelBuilder.Entity<ApplicationUser>()
+                    .HasMany(user => user.ManagedLocals)
+                    .WithOne()
+                    .HasForeignKey(local => local.ApplicationUserId)
+                    .IsRequired(false);
+
         base.OnModelCreating(modelBuilder);
     }
 }
