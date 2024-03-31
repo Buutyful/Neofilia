@@ -13,6 +13,7 @@ namespace Neofilia.Domain;
 
 public class Table : IEquatable<Table>
 {
+    private readonly List<Guid> _usersId = [];
     private Table() { } //ef ctor
     public readonly record struct TableId(int Id);
     public TableId Id { get; private set; } //PK
@@ -21,13 +22,12 @@ public class Table : IEquatable<Table>
 
     //navigation
     public Reward? Reward { get; private set; }
-    public ICollection<Guid> UsersId { get; private set; } = [];
-    public IEnumerable<Guid> PartecipantsId => UsersId;
+    public IReadOnlyCollection<Guid> PartecipantsId => _usersId.AsReadOnly();
 
     public Table(LocalId localId, int tableNumber) => 
         (LocalId, TableNumber) = (localId, tableNumber);
-    public void AddPartecipant(Guid userId) => UsersId.Add(userId);
-    public void RemovePartecipant(Guid userId) => UsersId.Remove(userId);
+    public void AddPartecipant(Guid userId) => _usersId.Add(userId);
+    public void RemovePartecipant(Guid userId) => _usersId.Remove(userId);
     public bool Equals(Table? other) =>
         other is not null && Id.Equals(other.Id);
     public override bool Equals(object? obj) =>
