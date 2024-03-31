@@ -20,12 +20,13 @@ public class TableConfig : IEntityTypeConfiguration<Table>
         {
             rewardBuilder.ToTable("Rewards");
 
-            rewardBuilder.HasKey("Id", "TableId");
+            rewardBuilder.HasKey(nameof(Reward.Id), "TableId");
 
             rewardBuilder.WithOwner()
                          .HasForeignKey(r => r.TableId);
 
             rewardBuilder.Property(c => c.Id)
+                         .HasColumnName("RewardId")
                          .HasConversion(
                           rewardId => rewardId.Id,
                           value => new Reward.RewardId(value));

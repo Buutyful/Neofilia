@@ -33,22 +33,31 @@ public class LocalConfig : IEntityTypeConfiguration<Local>
         });
 
         builder.HasMany(t => t.Tables)
-               .WithOne();
+               .WithOne()
+               .HasForeignKey(t => t.LocalId)
+               .IsRequired();
                
 
         builder.OwnsMany(m => m.Menus, menuBuilder =>
         {
             menuBuilder.ToTable("Menus");
 
-            menuBuilder.HasKey("Id", "LocalId");
+            menuBuilder.HasKey(nameof(Menu.Id), "LocalId");
 
             menuBuilder.WithOwner()
-                       .HasForeignKey(t => t.LocalId);
+                       .HasForeignKey("LocalId");
 
             menuBuilder.Property(c => c.Id)
+                       .HasColumnName("MenuId")
                        .HasConversion(
                         menuId => menuId.Id,
                         value => new Menu.MenuId(value));
         });
+
+        builder.Metadata.FindNavigation(nameof(Local.Tables))!
+                        .SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Metadata.FindNavigation(nameof(Local.Menus))!
+                        .SetPropertyAccessMode(PropertyAccessMode.Field);
     }
 }

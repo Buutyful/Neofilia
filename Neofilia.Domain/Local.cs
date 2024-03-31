@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using static Neofilia.Domain.Menu;
+﻿using static Neofilia.Domain.Menu;
 using static Neofilia.Domain.Table;
 
 namespace Neofilia.Domain;
@@ -11,6 +10,8 @@ namespace Neofilia.Domain;
 
 public class Local
 {
+    private readonly List<Table> _tables = [];
+    private readonly List<Menu> _menus = [];
     private Local() { } //ef ctor
 
     public readonly record struct LocalId(int Id);
@@ -22,11 +23,8 @@ public class Local
     public DateTimeOffset EventEndsAt { get; private set; }
 
     //navigation
-    public ICollection<Table> Tables { get; private set; } = [];
-    public ICollection<Menu> Menus { get; private set; } = [];
-    public IEnumerable<Table> GetTables => Tables;
-    [NotMapped]
-    public IEnumerable<Menu> GetMenus => Menus;
+    public IReadOnlyList<Table> Tables => _tables.AsReadOnly();   
+    public IReadOnlyList<Menu> Menus => _menus.AsReadOnly();
 
     public Local(
         Guid manager,
@@ -44,38 +42,38 @@ public class Local
             throw new InvalidOperationException("Event needs to start before it ends");
         EventStartsAt = eventStartsAt;
         EventEndsAt = eventEndsAt;
-        Tables = [.. tables];
-        Menus = [.. menuIds];
+        _tables = [.. tables];
+        _menus = [.. menuIds];
     }
 
     //need to add domain events and further validation
     #region Table
     public void AddTable(Table table)
     {
-        if (Tables.Any(t => t.Equals(table)))
+        if (_tables.Any(t => t.Equals(table)))
             throw new InvalidOperationException("cant have the same table two times: At(AddTable)");
-        Tables.Add(table);
+        _tables.Add(table);
     }
     public void RemoveTable(TableId tableId)
     {
-        var table = Tables.FirstOrDefault(t => t.Id == tableId) ??
+        var table = _tables.FirstOrDefault(t => t.Id == tableId) ??
             throw new InvalidOperationException("Table with given id was not found: At(RemoveTable)");
-        Tables.Remove(table);
+        _tables.Remove(table);
     }
     public void AddPartecipantToTable(Guid partecipantId, Table table)
     {
-        if (Tables.Any(t => t.PartecipantsId
+        if (_tables.Any(t => t.PartecipantsId
                   .Any(id => id == partecipantId)))
             throw new InvalidOperationException("user already partecipating to an other table: At(AddPartecipantToTable)");
         
-        var localTable = Tables.FirstOrDefault(t => t.Equals(table))
+        var localTable = _tables.FirstOrDefault(t => t.Equals(table))
             ?? throw new InvalidOperationException("given table was not found in local: At(AddPartecipantToTable)");
         
         localTable.AddPartecipant(partecipantId);
     }
     public void RemovePartecipantFromTable(Guid partecipantId, Table table)
     {
-        var localTable = Tables.FirstOrDefault(t => t.Equals(table))
+        var localTable = _tables.FirstOrDefault(t => t.Equals(table))
             ?? throw new InvalidOperationException("given table was not found in local");
 
         localTable.RemovePartecipant(partecipantId);
@@ -85,14 +83,14 @@ public class Local
 
     public void AddMenu(Menu menu)
     {
-        if (Menus.Any(m => m.Id.Equals(menu.Id)))
+        if (_menus.Any(m => m.Id.Equals(menu.Id)))
             throw new InvalidOperationException("cant have the same menu two times");
-        Menus.Add(menu);
+        _menus.Add(menu);
     }
     public void RemoveMenu(MenuId menuId)
     {
-        var menu = Menus.Where(m => m.Id.Equals(menuId)).First();
-        Menus.Remove(menu);
+        var menu = _menus.Where(m => m.Id.Equals(menuId)).First();
+        _menus.Remove(menu);
     }
     public void ChangeEventStartDate(DateTimeOffset date) => EventStartsAt = date;
     public void ChangeEventEndDate(DateTimeOffset date) => EventEndsAt = date;
