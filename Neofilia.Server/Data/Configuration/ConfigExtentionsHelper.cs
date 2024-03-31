@@ -10,6 +10,7 @@ public static class ConfigExtentionsHelper
     {
         return propertyBuilder.HasConversion(
             value => value.Value,
-            stringValue => new NotEmptyString(stringValue));
+            stringValue => new NotEmptyString(stringValue))
+            .HasMaxLength(255); ;
     }
 }
