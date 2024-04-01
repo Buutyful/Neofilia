@@ -4,9 +4,9 @@ using static Neofilia.Domain.Table;
 namespace Neofilia.Domain;
 //Aggregate root
 //Local must have many Tables
-//Local may have many Menus
+//Local may own many Menus
 //UserManager may have many Locals
-//how should the global game be implemented?
+
 
 public class Local
 {
@@ -14,10 +14,9 @@ public class Local
     private readonly List<Menu> _menus = [];
     private Local() { } //ef ctor
 
-    public readonly record struct LocalId(int Id);
-    //public readonly record struct ManagerId(string Id);
+    public readonly record struct LocalId(int Id);    
     public LocalId Id { get; private set; } //PK
-    public string ApplicationUserId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED
+    public string ApplicationUserId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED, IdentityUser
     public NotEmptyString Name { get; private set; }
     public Address Address { get; private set; }
     public DateTimeOffset EventStartsAt { get; private set; }
@@ -47,7 +46,7 @@ public class Local
         _menus = [.. menuIds];
     }
 
-    //need to add domain events and further validation
+    //TODO: add domain events and further validation
     #region Table
     public void AddTable(Table table)
     {
@@ -63,8 +62,8 @@ public class Local
     }
     public void AddPartecipantToTable(Guid partecipantId, Table table)
     {
-        if (_tables.Any(t => t.PartecipantsId
-                  .Any(id => id == partecipantId)))
+        if (_tables.Any(t => t.PartecipantsIds
+                   .Any(id => id == partecipantId)))
             throw new InvalidOperationException("user already partecipating to an other table: At(AddPartecipantToTable)");
         
         var localTable = _tables.FirstOrDefault(t => t.Equals(table))
@@ -75,7 +74,7 @@ public class Local
     public void RemovePartecipantFromTable(Guid partecipantId, Table table)
     {
         var localTable = _tables.FirstOrDefault(t => t.Equals(table))
-            ?? throw new InvalidOperationException("given table was not found in local");
+            ?? throw new InvalidOperationException("given table was not found in local: At(RemovePartecipantFromTable)");
 
         localTable.RemovePartecipant(partecipantId);
     }

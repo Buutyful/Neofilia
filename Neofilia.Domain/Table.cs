@@ -4,7 +4,7 @@
 namespace Neofilia.Domain;
 //Table is an entity, must be accessed only inside Local aggregate boundry
 
-//Table may have one reward
+//Table may own one reward
 //Table may have many partecipants
 // ?? Table may have many local games ?? not now, maybe future feature
 
@@ -22,12 +22,16 @@ public class Table : IEquatable<Table>
 
     //navigation
     public Reward? Reward { get; private set; }
-    public IReadOnlyCollection<Guid> PartecipantsId => _usersId.AsReadOnly();
+    public IReadOnlyCollection<Guid> PartecipantsIds => _usersId.AsReadOnly();
 
     public Table(LocalId localId, int tableNumber) => 
         (LocalId, TableNumber) = (localId, tableNumber);
     public void AddPartecipant(Guid userId) => _usersId.Add(userId);
     public void RemovePartecipant(Guid userId) => _usersId.Remove(userId);
+    public void GenerateReward()
+    {
+        //TODO
+    }
     public bool Equals(Table? other) =>
         other is not null && Id.Equals(other.Id);
     public override bool Equals(object? obj) =>
