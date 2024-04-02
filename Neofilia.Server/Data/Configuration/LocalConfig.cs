@@ -12,7 +12,7 @@ public class LocalConfig : IEntityTypeConfiguration<Local>
 
         builder.Property(c => c.Id)
                .HasConversion(
-                local => local.Id,
+                local => local.Value,
                 value => new Local.LocalId(value));      
 
         builder.Property(c => c.Name).ConfigureNotEmptyString();

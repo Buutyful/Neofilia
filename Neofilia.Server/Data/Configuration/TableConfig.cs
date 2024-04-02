@@ -13,7 +13,7 @@ public class TableConfig : IEntityTypeConfiguration<Table>
 
         builder.Property(c => c.Id)
                .HasConversion(
-                table => table.Id,
+                table => table.Value,
                 value => new Table.TableId(value));
 
         builder.OwnsOne(t => t.Reward, rewardBuilder =>

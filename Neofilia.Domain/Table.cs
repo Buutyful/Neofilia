@@ -15,7 +15,7 @@ public class Table : IEquatable<Table>
 {
     private readonly List<Guid> _usersId = [];
     private Table() { } //ef ctor
-    public readonly record struct TableId(int Id);
+    public readonly record struct TableId(int Value);
     public TableId Id { get; private set; } //PK
     public LocalId LocalId { get; private set; } //FK: Locals{ID}, REQUIRED
     public int TableNumber { get; private set; } //should this match the id?

@@ -14,7 +14,7 @@ public class Local
     private readonly List<Menu> _menus = [];
     private Local() { } //ef ctor
 
-    public readonly record struct LocalId(int Id);    
+    public readonly record struct LocalId(int Value);    
     public LocalId Id { get; private set; } //PK
     public string ApplicationUserId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED, IdentityUser
     public NotEmptyString Name { get; private set; }
