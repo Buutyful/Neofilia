@@ -13,30 +13,27 @@ public class LocalConfig : IEntityTypeConfiguration<Local>
         builder.Property(c => c.Id)
                .HasConversion(
                 local => local.Value,
-                value => new Local.LocalId(value));      
+                value => new Local.LocalId(value));
 
         builder.Property(c => c.Name).ConfigureNotEmptyString();
 
         builder.OwnsOne(x => x.Address, addressBuilder =>
         {
             addressBuilder.Property(a => a.Street)
-                .HasColumnName("Street")
-                .ConfigureNotEmptyString();
+                          .ConfigureNotEmptyString();
 
             addressBuilder.Property(a => a.CivilNumber)
-                .HasColumnName("CivilNumber")
-                .ConfigureNotEmptyString();
+                          .ConfigureNotEmptyString();
 
             addressBuilder.Property(a => a.PhoneNumber)
-                .HasColumnName("PhoneNumber")
-                .ConfigureNotEmptyString();
+                          .ConfigureNotEmptyString();
         });
 
         builder.HasMany(t => t.Tables)
                .WithOne()
                .HasForeignKey(t => t.LocalId)
                .IsRequired();
-               
+
 
         builder.OwnsMany(m => m.Menus, menuBuilder =>
         {
