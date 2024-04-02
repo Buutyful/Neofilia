@@ -1,5 +1,6 @@
 using Neofilia.Server;
 using Neofilia.Server.Components;
+using Neofilia.Server.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,9 @@ builder.Services.AddRazorComponents()
 
 //Add ef identity
 builder.Services.AddIdentityServices(builder.Configuration);
+
+//Add context repos
+builder.Services.AddPersistence();
 
 
 var app = builder.Build();
