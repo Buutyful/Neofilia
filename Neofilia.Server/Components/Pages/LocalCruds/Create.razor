@@ -1,0 +1,74 @@
+﻿@page "/locals/create"
+@inject LocalRepository DB
+
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h4>LocalModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="LocalModel" OnValidSubmit="AddLocalModel" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="mb-3">
+                <label for="applicationuserid" class="form-label">ApplicationUserId:</label> 
+                <InputText id="applicationuserid" @bind-Value="LocalModel.ApplicationUserId" class="form-control" /> 
+                <ValidationMessage For="() => LocalModel.ApplicationUserId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="LocalModel.Name" class="form-control" /> 
+                <ValidationMessage For="() => LocalModel.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="street" class="form-label">Street:</label> 
+                <InputText id="street" @bind-Value="LocalModel.Street" class="form-control" /> 
+                <ValidationMessage For="() => LocalModel.Street" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="civilnumber" class="form-label">CivilNumber:</label> 
+                <InputText id="civilnumber" @bind-Value="LocalModel.CivilNumber" class="form-control" /> 
+                <ValidationMessage For="() => LocalModel.CivilNumber" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="phonenumber" class="form-label">PhoneNumber:</label> 
+                <InputText id="phonenumber" @bind-Value="LocalModel.PhoneNumber" class="form-control" /> 
+                <ValidationMessage For="() => LocalModel.PhoneNumber" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="eventstartsat" class="form-label">EventStartsAt:</label> 
+                <InputDate id="eventstartsat" @bind-Value="LocalModel.EventStartsAt" class="form-control" /> 
+                <ValidationMessage For="() => LocalModel.EventStartsAt" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="eventendsat" class="form-label">EventEndsAt:</label> 
+                <InputDate id="eventendsat" @bind-Value="LocalModel.EventEndsAt" class="form-control" /> 
+                <ValidationMessage For="() => LocalModel.EventEndsAt" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/localmodels">Back to List</a>
+</div>
+
+@code {
+
+    [SupplyParameterFromForm]
+    public LocalModel LocalModel { get; set; } = new();
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task AddLocalModel()
+    {
+        //map localmodel to entity
+        var local = LocalModel.ToLocal();
+        await DB.Add(local);
+        NavigationManager.NavigateTo("/locals");
+    }
+}

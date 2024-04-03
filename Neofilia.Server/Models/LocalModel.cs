@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Neofilia.Domain;
+using System.ComponentModel.DataAnnotations;
 
 namespace Neofilia.Server.Models;
 
@@ -29,5 +30,16 @@ public class LocalModel
 
     [Required(ErrorMessage = "EventEndsAt is required")]
     public DateTimeOffset EventEndsAt { get; set; }
+
+    public Local ToLocal() =>
+        new(ApplicationUserId,
+            Name,
+            new Address(new NotEmptyString(Street),
+                        new NotEmptyString(CivilNumber),
+                        new NotEmptyString(PhoneNumber)),
+            EventStartsAt,
+            EventEndsAt,
+            [],
+            []);            
 
 }

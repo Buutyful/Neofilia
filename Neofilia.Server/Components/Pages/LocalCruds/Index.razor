@@ -1,0 +1,47 @@
+﻿@page "/locals"
+@inject LocalRepository DB
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="locals/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredItems" Pagination="State">
+    <PropertyColumn Property="localmodel => localmodel.ApplicationUserId" />
+    <PropertyColumn Property="localmodel => localmodel.Name" />
+     @*  <ColumnOptions>
+            <div>
+                <input type="search" @bind="descriptionFilter" @bind:event="oninput" autofocus/>
+            </div>
+        </ColumnOptions> *@
+    <PropertyColumn Property="localmodel => localmodel.Street" />
+    <PropertyColumn Property="localmodel => localmodel.CivilNumber" />
+    <PropertyColumn Property="localmodel => localmodel.PhoneNumber" />
+    <PropertyColumn Property="localmodel => localmodel.EventStartsAt" />
+    <PropertyColumn Property="localmodel => localmodel.EventEndsAt" />
+
+    <TemplateColumn Context="localmodel">
+        <a href="@($"locals/edit?id={localmodel.Id}")">Edit</a> |
+        <a href="@($"locals/details?id={localmodel.Id}")">Details</a> |
+        <a href="@($"locals/delete?id={localmodel.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+<Paginator State="State" />
+@code
+{
+    PaginationState State = new PaginationState { ItemsPerPage = 10 };
+    public List<LocalModel> Items { get; set; } = [];
+    string descriptionFilter = "";
+    public IQueryable<LocalModel> FilteredItems => Items.Where(item => item?.Name
+                                                                  .Contains(descriptionFilter) ?? false)
+                                                                  .AsQueryable();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var locals = await DB.Get();
+        Items = [.. locals.ToModelList()];
+    }
+}

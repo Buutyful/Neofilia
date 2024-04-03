@@ -1,0 +1,75 @@
+﻿@page "/locals/delete"
+@inject LocalRepository DB
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>LocalModel</h4>
+    <hr />
+    @if (localmodel is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ApplicationUserId</dt>
+            <dd class="col-sm-10">@localmodel.ApplicationUserId</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@localmodel.Name</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Street</dt>
+            <dd class="col-sm-10">@localmodel.Street</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">CivilNumber</dt>
+            <dd class="col-sm-10">@localmodel.CivilNumber</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">PhoneNumber</dt>
+            <dd class="col-sm-10">@localmodel.PhoneNumber</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">EventStartsAt</dt>
+            <dd class="col-sm-10">@localmodel.EventStartsAt</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">EventEndsAt</dt>
+            <dd class="col-sm-10">@localmodel.EventEndsAt</dd>
+        </dl>
+        <EditForm method="post" Model="localmodel" OnValidSubmit="DeleteLocalModel" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(localmodel is null)">Delete</button> |
+            <a href="/localmodels">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    LocalModel? localmodel;
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var local = await DB.GetById(Id);
+        localmodel = local?.ToModel() ?? null;
+
+        if (localmodel is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    public async Task DeleteLocalModel()
+    {
+        await DB.Delete(Id);        
+        NavigationManager.NavigateTo("/locals");
+    }
+}
