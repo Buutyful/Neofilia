@@ -8,12 +8,17 @@ public class LocalConfig : IEntityTypeConfiguration<Local>
 {
     public void Configure(EntityTypeBuilder<Local> builder)
     {
+
         builder.HasKey(x => x.Id);
 
         builder.Property(c => c.Id)
                .HasConversion(
                 local => local.Value,
                 value => new Local.LocalId(value));
+
+        builder.Property(x => x.Id)
+               .ValueGeneratedOnAdd()
+               .UseIdentityColumn();
 
         builder.Property(c => c.Name).ConfigureNotEmptyString();
 

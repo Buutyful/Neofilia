@@ -12,15 +12,15 @@ using Neofilia.Server.Data;
 namespace Neofilia.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240331002957_test")]
-    partial class test
+    [Migration("20240403212655_test1")]
+    partial class test1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -161,7 +161,13 @@ namespace Neofilia.Server.Migrations
             modelBuilder.Entity("Neofilia.Domain.Local", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTimeOffset>("EventEndsAt")
                         .HasColumnType("datetimeoffset");
@@ -169,14 +175,14 @@ namespace Neofilia.Server.Migrations
                     b.Property<DateTimeOffset>("EventStartsAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid?>("ManagerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Locals");
                 });
@@ -184,7 +190,10 @@ namespace Neofilia.Server.Migrations
             modelBuilder.Entity("Neofilia.Domain.Table", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("LocalId")
                         .HasColumnType("int");
@@ -317,6 +326,10 @@ namespace Neofilia.Server.Migrations
 
             modelBuilder.Entity("Neofilia.Domain.Local", b =>
                 {
+                    b.HasOne("Neofilia.Server.Data.ApplicationUser", null)
+                        .WithMany("ManagedLocals")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.OwnsOne("Neofilia.Domain.Address", "Address", b1 =>
                         {
                             b1.Property<int>("LocalId")
@@ -324,18 +337,18 @@ namespace Neofilia.Server.Migrations
 
                             b1.Property<string>("CivilNumber")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("CivilNumber");
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)");
 
                             b1.Property<string>("PhoneNumber")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("PhoneNumber");
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)");
 
                             b1.Property<string>("Street")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("Street");
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)");
 
                             b1.HasKey("LocalId");
 
@@ -423,6 +436,11 @@ namespace Neofilia.Server.Migrations
             modelBuilder.Entity("Neofilia.Domain.Local", b =>
                 {
                     b.Navigation("Tables");
+                });
+
+            modelBuilder.Entity("Neofilia.Server.Data.ApplicationUser", b =>
+                {
+                    b.Navigation("ManagedLocals");
                 });
 #pragma warning restore 612, 618
         }

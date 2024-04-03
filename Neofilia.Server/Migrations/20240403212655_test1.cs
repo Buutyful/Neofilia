@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Neofilia.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class test : Migration
+    public partial class test1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,24 +48,6 @@ namespace Neofilia.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Locals",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    ManagerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CivilNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EventStartsAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    EventEndsAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Locals", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -175,6 +157,30 @@ namespace Neofilia.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Locals",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Address_Street = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Address_CivilNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Address_PhoneNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    EventStartsAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    EventEndsAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Locals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Locals_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Menus",
                 columns: table => new
                 {
@@ -197,7 +203,8 @@ namespace Neofilia.Server.Migrations
                 name: "Tables",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     LocalId = table.Column<int>(type: "int", nullable: false),
                     TableNumber = table.Column<int>(type: "int", nullable: false)
                 },
@@ -275,6 +282,11 @@ namespace Neofilia.Server.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Locals_ApplicationUserId",
+                table: "Locals",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Menus_LocalId",
                 table: "Menus",
                 column: "LocalId");
@@ -319,13 +331,13 @@ namespace Neofilia.Server.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Tables");
 
             migrationBuilder.DropTable(
                 name: "Locals");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

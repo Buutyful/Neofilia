@@ -158,7 +158,10 @@ namespace Neofilia.Server.Migrations
             modelBuilder.Entity("Neofilia.Domain.Local", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
@@ -184,7 +187,10 @@ namespace Neofilia.Server.Migrations
             modelBuilder.Entity("Neofilia.Domain.Table", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("LocalId")
                         .HasColumnType("int");

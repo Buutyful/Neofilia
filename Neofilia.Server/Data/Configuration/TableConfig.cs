@@ -9,12 +9,17 @@ public class TableConfig : IEntityTypeConfiguration<Table>
 {
     public void Configure(EntityTypeBuilder<Table> builder)
     {
+
         builder.HasKey(x => x.Id);
 
         builder.Property(c => c.Id)
                .HasConversion(
                 table => table.Value,
                 value => new Table.TableId(value));
+
+        builder.Property(x => x.Id)
+               .ValueGeneratedOnAdd()
+               .UseIdentityColumn();
 
         builder.OwnsOne(t => t.Reward, rewardBuilder =>
         {
