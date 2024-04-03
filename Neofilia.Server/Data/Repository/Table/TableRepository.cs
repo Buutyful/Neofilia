@@ -4,7 +4,7 @@ using Neofilia.Domain;
 namespace Neofilia.Server.Data.Repository;
 
 //basic implementation, TODO: implement it properly
-public class TableRepository(ApplicationDbContext context) : IRepository<Table>
+public class TableRepository(ApplicationDbContext context) : ITableRepository
 {
     private readonly ApplicationDbContext _context = context;
     public async Task Add(Table entity)

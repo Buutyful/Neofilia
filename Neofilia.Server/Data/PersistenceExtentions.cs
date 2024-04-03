@@ -7,8 +7,8 @@ public static class PersistenceExtentions
 {
     public static IServiceCollection AddPersistence(this IServiceCollection services)
     {
-        services.AddScoped<IRepository<Local>, LocalRepository>();
-        services.AddScoped<IRepository<Table>, TableRepository>();
+        services.AddScoped<ILocalRepository, LocalRepository>();
+        services.AddScoped<ITableRepository, TableRepository>();
         return services;
     }
 }

@@ -4,7 +4,7 @@ using Neofilia.Domain;
 namespace Neofilia.Server.Data.Repository;
 
 //basic implementation, TODO: implement it properly
-public class LocalRepository(ApplicationDbContext context) : IRepository<Local>
+public class LocalRepository(ApplicationDbContext context) : ILocalRepository
 {
     private readonly ApplicationDbContext _context = context;
 
