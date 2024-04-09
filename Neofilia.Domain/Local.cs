@@ -60,23 +60,32 @@ public class Local
             throw new InvalidOperationException("Table with given id was not found: At(RemoveTable)");
         _tables.Remove(table);
     }
-    public void AddPartecipantToTable(Guid partecipantId, Table table)
+    public void AddPartecipantToTable(string partecipantId, Table table)
     {
+        var existingTable = _tables.FirstOrDefault(t => t.Equals(table))
+            ?? throw new InvalidOperationException("given table was not found in local: At(AddPartecipantToTable)");
+
         if (_tables.Any(t => t.PartecipantsIds
                    .Any(id => id == partecipantId)))
-            throw new InvalidOperationException("user already partecipating to an other table: At(AddPartecipantToTable)");
-        
-        var localTable = _tables.FirstOrDefault(t => t.Equals(table))
-            ?? throw new InvalidOperationException("given table was not found in local: At(AddPartecipantToTable)");
-        
-        localTable.AddPartecipant(partecipantId);
-    }
-    public void RemovePartecipantFromTable(Guid partecipantId, Table table)
-    {
-        var localTable = _tables.FirstOrDefault(t => t.Equals(table))
-            ?? throw new InvalidOperationException("given table was not found in local: At(RemovePartecipantFromTable)");
+        {
+            var partecipating = _tables.Where(t => t.PartecipantsIds
+            .Contains(partecipantId)).First();
 
-        localTable.RemovePartecipant(partecipantId);
+            SwitchTable(
+                partecipantId,
+                current: partecipating,
+                other: existingTable);
+            return;
+        }
+
+        existingTable.AddPartecipant(partecipantId);
+    }
+    public void RemovePartecipantFromTable(string partecipantId)
+    {
+        var partecipating = _tables.Where(t => t.PartecipantsIds
+             .Contains(partecipantId)).First();
+
+        partecipating.RemovePartecipant(partecipantId);
     }
 
     #endregion
@@ -94,7 +103,11 @@ public class Local
     }
     public void ChangeEventStartDate(DateTimeOffset date) => EventStartsAt = date;
     public void ChangeEventEndDate(DateTimeOffset date) => EventEndsAt = date;
-
+    private void SwitchTable(string partecipantId, Table current, Table other)
+    {
+        current.RemovePartecipant(partecipantId);
+        other.AddPartecipant(partecipantId);
+    }
 }
 
 public readonly record struct NotEmptyString(string Value)

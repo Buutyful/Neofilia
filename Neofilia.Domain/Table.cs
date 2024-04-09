@@ -1,4 +1,5 @@
 ﻿using static Neofilia.Domain.Local;
+using static Neofilia.Domain.Table;
 
 
 namespace Neofilia.Domain;
@@ -13,25 +14,44 @@ namespace Neofilia.Domain;
 
 public class Table : IEquatable<Table>
 {
-    private readonly List<Guid> _usersId = [];
+    private static readonly int _scoreCap = 100;
+    private readonly List<string> _usersId = [];
+    private int _currentScore = 0;
     private Table() { } //ef ctor
     public readonly record struct TableId(int Value);
     public TableId Id { get; private set; } //PK
     public LocalId LocalId { get; private set; } //FK: Locals{ID}, REQUIRED
+
+    public event EventHandler<RewardGeneratedEvent>? RewardGenerated;
     public int TableNumber { get; private set; } //should this match the id?
+    public int TableScore 
+    { get => _currentScore;
+      private set
+        {
+            _currentScore += value;
+            if (_currentScore >= _scoreCap)
+            {
+                GenerateReward();
+                _currentScore = 0;
+            }
+        }
+    }
 
     //navigation
     public Reward? Reward { get; private set; }
-    public IReadOnlyCollection<Guid> PartecipantsIds => _usersId.AsReadOnly();
+    public IReadOnlyCollection<string> PartecipantsIds => _usersId.AsReadOnly();
 
     public Table(LocalId localId, int tableNumber) => 
         (LocalId, TableNumber) = (localId, tableNumber);
-    public void AddPartecipant(Guid userId) => _usersId.Add(userId);
-    public void RemovePartecipant(Guid userId) => _usersId.Remove(userId);
-    public void GenerateReward()
+    public void AddPartecipant(string userId) => _usersId.Add(userId);
+    public void RemovePartecipant(string userId) => _usersId.Remove(userId);
+    private void GenerateReward()
     {
-        //TODO
+        //temporary reward system, missing implementation details
+        Reward = new Reward(RewardType.Drink, this.Id);
+        OnRewardGenerated(new RewardGeneratedEvent(this.Id, Reward));
     }
+    private void OnRewardGenerated(RewardGeneratedEvent e) => RewardGenerated?.Invoke(this, e);
     public bool Equals(Table? other) =>
         other is not null && Id.Equals(other.Id);
     public override bool Equals(object? obj) =>
@@ -47,4 +67,10 @@ public class Table : IEquatable<Table>
         new(id, localId, tableNumber);
     public static Table CreateTestTableId(TableId id) =>
        new(id);
+}
+
+public class RewardGeneratedEvent(TableId tableId, Reward reward) : EventArgs
+{
+    public TableId Id {  get; init; } = tableId;
+    public Reward Reward { get; init; } = reward;
 }
