@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace Neofilia.Server.Services.Quiz;
 
 //using https://opentdb.com/api_config.php
-public static class QuestionService
+public static class QuizService
 {
     private static readonly HttpClient _httpClient = new HttpClient();
     private static readonly List<Question> _questions = new List<Question>();

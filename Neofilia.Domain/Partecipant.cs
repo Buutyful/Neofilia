@@ -10,16 +10,22 @@ public class Partecipant
 {
     public Guid Id { get; private set; }
     public TableId TableId { get; private set; }
+    public string ConnectionId { get; private set; }
     public NotEmptyString UserName { get; private set; }
     public NotEmptyString Token { get; private set; }
 
-    public Partecipant(TableId tableId, NotEmptyString userName, NotEmptyString token)
+    public Partecipant(
+        TableId tableId,
+        string connectionId,
+        NotEmptyString userName,
+        NotEmptyString token)
     {
-       
+        Id = Guid.NewGuid();
         TableId = tableId;
+        ConnectionId = connectionId;
         UserName = userName;
         Token = token;
     }
 
-   
+
 }
