@@ -48,13 +48,13 @@ public class Game
             "timer elapsed while the game was not in execution");
     }
 
-    public Task Run(IState initialState)
+    public async Task Run(IState initialState)
     {
         _currentState = initialState;
         //TODO: change this to match the event duration
         while (true)
         {
-
+            await _currentState.ExecuteAsync(this);
         }
     }
 }
