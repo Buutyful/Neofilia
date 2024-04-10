@@ -71,12 +71,13 @@ public class LocalTests
         var local = CreateTestLocal();
         var table = local.Tables.Where(l => l.LocalId.Value == 1).First();
         var other = local.Tables.Where(l => l.LocalId.Value == 1).Last();
-        local.AddPartecipantToTable(guid, table);
+        var partecipant = new Partecipant(table.Id, guid, new NotEmptyString());
+        local.AddPartecipantToTable(partecipant, table);
         //Act
-        local.AddPartecipantToTable(guid, other);
+        local.AddPartecipantToTable(partecipant, other);
         //Assert
-        Assert.DoesNotContain(guid, table.PartecipantsIds);
-        Assert.Contains(guid, other.PartecipantsIds);
+        Assert.DoesNotContain(partecipant, table.Partecipants);
+        Assert.Contains(partecipant, other.Partecipants);
     }
     [Fact]
     public void AddPartecipantToTable_WhenTableIsNotFoundInLocal_ShouldThrow()
@@ -84,11 +85,12 @@ public class LocalTests
         //Arrange
         var guid = Guid.NewGuid().ToString();
         var table = Table.CreateTestTable(new Table.TableId(15), new Local.LocalId(1), 1);
+        var partecipant = new Partecipant(table.Id, guid, new NotEmptyString());
         var local = CreateTestLocal();       
         //Act and Assert
         Assert.Throws<InvalidOperationException>(() =>
         {
-            local.AddPartecipantToTable(guid, table);
+            local.AddPartecipantToTable(partecipant, table);
         });
     }
     private Local CreateTestLocal()

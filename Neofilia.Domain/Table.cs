@@ -15,7 +15,7 @@ namespace Neofilia.Domain;
 public class Table : IEquatable<Table>
 {
     private static readonly int _scoreCap = 100;
-    private readonly List<string> _usersId = [];
+    private readonly List<Partecipant> _partecipants = [];
     private int _currentScore = 0;
     private Table() { } //ef ctor
     public readonly record struct TableId(int Value);
@@ -39,12 +39,12 @@ public class Table : IEquatable<Table>
 
     //navigation
     public Reward? Reward { get; private set; }
-    public IReadOnlyCollection<string> PartecipantsIds => _usersId.AsReadOnly();
+    public IReadOnlyCollection<Partecipant> Partecipants => _partecipants.AsReadOnly();
 
     public Table(LocalId localId, int tableNumber) => 
         (LocalId, TableNumber) = (localId, tableNumber);
-    public void AddPartecipant(string userId) => _usersId.Add(userId);
-    public void RemovePartecipant(string userId) => _usersId.Remove(userId);
+    public void AddPartecipant(Partecipant user) => _partecipants.Add(user);
+    public void RemovePartecipant(Partecipant user) => _partecipants.Remove(user);
     private void GenerateReward()
     {
         //temporary reward system, missing implementation details

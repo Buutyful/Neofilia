@@ -2,7 +2,8 @@
 using Timer = System.Timers.Timer;
 
 namespace Neofilia.Server.Services.Quiz;
-
+//quiz loop manager class
+//TODO: Link this with signalR hub
 public class Game
 {
     private static readonly int _roundTimer = 60000;
@@ -106,10 +107,15 @@ public class Execution : IState
 
 public class End : IState
 {
-    //Evaluate Answers
+    //Fetch Answers
+    private async Task GetAnswersAsync()
+    {        
+        throw new NotImplementedException();
+    }
     //Call SetUp
     public async Task ExecuteAsync(Game game)
     {
+        //evaluete answers
         game.SwitchState(new SetUp());
     }
 }

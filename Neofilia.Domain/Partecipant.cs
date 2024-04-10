@@ -9,7 +9,7 @@ namespace Neofilia.Domain;
 //If a different table is scanned while token is active, partecipant will switch table.
 //Implementation detalis missing
 public class Partecipant
-{    
+{
     public string ConnectionId { get; }
     public TableId TableId { get; private set; }
     public NotEmptyString UserName { get; private set; }
@@ -33,6 +33,29 @@ public class Partecipant
         return new NotEmptyString(token);
     }
 
+    public override bool Equals(object? obj)
+    {
+        if (obj is null || obj is not Partecipant)
+            return false;
+        if (Object.ReferenceEquals(this, obj))
+            return true;
+        if (this.GetType() != obj.GetType())
+            return false;
+        Partecipant item = (Partecipant)obj;
+        return item.ConnectionId == this.ConnectionId;
+    }
+    public override int GetHashCode() => ConnectionId.GetHashCode();
+    public static bool operator ==(Partecipant left, Partecipant right)
+    {
+        if (Object.Equals(left, null))
+            return (Object.Equals(right, null));
+        else
+            return left.Equals(right);
+    }
+    public static bool operator !=(Partecipant left, Partecipant right)
+    {
+        return !(left == right);
+    }
 }
 
 public static class TokenGenerator

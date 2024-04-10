@@ -14,7 +14,7 @@ public class Local
     private readonly List<Menu> _menus = [];
     private Local() { } //ef ctor
 
-    public readonly record struct LocalId(int Value);    
+    public readonly record struct LocalId(int Value);
     public LocalId Id { get; private set; } //PK
     public string ApplicationUserId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED, IdentityUser
     public NotEmptyString Name { get; private set; }
@@ -23,7 +23,7 @@ public class Local
     public DateTimeOffset EventEndsAt { get; private set; }
 
     //navigation
-    public IReadOnlyList<Table> Tables => _tables.AsReadOnly();   
+    public IReadOnlyList<Table> Tables => _tables.AsReadOnly();
     public IReadOnlyList<Menu> Menus => _menus.AsReadOnly();
 
     public Local(
@@ -60,33 +60,28 @@ public class Local
             throw new InvalidOperationException("Table with given id was not found: At(RemoveTable)");
         _tables.Remove(table);
     }
-    public void AddPartecipantToTable(string partecipantId, Table table)
+    public void AddPartecipantToTable(Partecipant partecipant, Table table)
     {
         var existingTable = _tables.FirstOrDefault(t => t.Equals(table))
             ?? throw new InvalidOperationException("given table was not found in local: At(AddPartecipantToTable)");
 
-        if (_tables.Any(t => t.PartecipantsIds
-                   .Any(id => id == partecipantId)))
+        if (_tables.Any(t => t.Partecipants
+                   .Any(p => p == partecipant)))
         {
-            var partecipating = _tables.Where(t => t.PartecipantsIds
-            .Contains(partecipantId)).First();
+            var currentTable = _tables.First(t => t.Id.Equals(partecipant.TableId));
 
             SwitchTable(
-                partecipantId,
-                current: partecipating,
+                partecipant,
+                current: currentTable,
                 other: existingTable);
             return;
         }
 
-        existingTable.AddPartecipant(partecipantId);
+        existingTable.AddPartecipant(partecipant);
     }
-    public void RemovePartecipantFromTable(string partecipantId)
-    {
-        var partecipating = _tables.Where(t => t.PartecipantsIds
-             .Contains(partecipantId)).First();
+    public void RemovePartecipantFromTable(Partecipant partecipant, Table table) =>
+        table.RemovePartecipant(partecipant);
 
-        partecipating.RemovePartecipant(partecipantId);
-    }
 
     #endregion
 
@@ -103,10 +98,10 @@ public class Local
     }
     public void ChangeEventStartDate(DateTimeOffset date) => EventStartsAt = date;
     public void ChangeEventEndDate(DateTimeOffset date) => EventEndsAt = date;
-    private void SwitchTable(string partecipantId, Table current, Table other)
+    private void SwitchTable(Partecipant partecipant, Table current, Table other)
     {
-        current.RemovePartecipant(partecipantId);
-        other.AddPartecipant(partecipantId);
+        current.RemovePartecipant(partecipant);
+        other.AddPartecipant(partecipant);
     }
 }
 
@@ -115,8 +110,8 @@ public readonly record struct NotEmptyString(string Value)
     public string Value { get; init; } =
         !string.IsNullOrWhiteSpace(Value) ? Value.Trim()
         : throw new ArgumentException("Value cannot be null or white space", nameof(Value));
-    public NotEmptyString() : this("NoData") { } 
-    
+    public NotEmptyString() : this("NoData") { }
+
     public static implicit operator string(NotEmptyString value) => value.Value;
 }
 
