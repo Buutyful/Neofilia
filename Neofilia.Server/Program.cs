@@ -1,6 +1,7 @@
 using Neofilia.Server;
 using Neofilia.Server.Components;
 using Neofilia.Server.Data;
+using Neofilia.Server.Services.Quiz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,5 +40,7 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
+await QuizHub.CreateSignalRGroups(app.Services);
 
 app.Run();
+

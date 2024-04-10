@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography;
 using System.Text;
 using static Neofilia.Domain.Table;
 
@@ -8,8 +9,10 @@ namespace Neofilia.Domain;
 //the token can only be refreshed by scanning the table qr
 //If a different table is scanned while token is active, partecipant will switch table.
 //Implementation detalis missing
+[NotMapped]
 public class Partecipant
 {
+    private Partecipant() { }
     public string ConnectionId { get; }
     public TableId TableId { get; private set; }
     public NotEmptyString UserName { get; private set; }

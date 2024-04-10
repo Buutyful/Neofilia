@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Neofilia.Server.Components.Account;
 using Neofilia.Server.Data;
+using Neofilia.Server.Data.Repository;
+using Neofilia.Server.Services.Quiz;
 
 namespace Neofilia.Server;
 
@@ -38,4 +41,5 @@ public static class IdentityExtentions
         services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
         return services;
     }
+
 }
