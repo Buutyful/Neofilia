@@ -45,6 +45,7 @@ public class Table : IEquatable<Table>
         (LocalId, TableNumber) = (localId, tableNumber);
     public void AddPartecipant(Partecipant user) => _partecipants.Add(user);
     public void RemovePartecipant(Partecipant user) => _partecipants.Remove(user);
+    public void AddScore() => TableScore++;
     private void GenerateReward()
     {
         //temporary reward system, missing implementation details
