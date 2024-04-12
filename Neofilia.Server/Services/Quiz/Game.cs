@@ -1,42 +1,61 @@
-﻿using System.Timers;
+﻿using Microsoft.AspNetCore.SignalR;
+using System.Timers;
 using Timer = System.Timers.Timer;
 
 namespace Neofilia.Server.Services.Quiz;
 //quiz loop manager class
 //TODO: Link this with signalR hub
-public class Game
+public class Game(IHubContext<QuizHub> hubContext)
 {
     private static readonly int _roundTimer = 60000;
+    private readonly IHubContext<QuizHub> _hubContext = hubContext;
 
-    private IState _currentState;
+    private IState _currentState = new SetUp();
 
     public bool IsRoundActive { get; private set; }
-    public Timer Timer { get; private set; }
-    public QuestionDto Question { get; private set; }
+    public Timer? Timer { get; private set; }
+    public QuestionDto? Question { get; private set; }
 
-    public void SwitchQuestion(QuestionDto question) => Question = question;
+    public async Task SwitchQuestion(QuestionDto question)
+    {
+        Question = question;
+        await _hubContext.Clients.All.SendAsync("QuestionChanged", Question.Text);
+    }
     public void SwitchState(IState newState) => _currentState = newState;
-    public void StartRound()
+    public async Task StartRound()
     {
         IsRoundActive = true;
+        if (Timer is null)
+            throw new InvalidOperationException("timer should not be null when round active");
+
+        await _hubContext.Clients.All.SendAsync("RoundStarted", _roundTimer);
         Timer.Start();
     }
-    public void StopRound()
+    public async Task StopRound()
     {
         IsRoundActive = false;
+        if (Timer is null)
+            throw new InvalidOperationException("timer should not be null when round active");
+
+        await _hubContext.Clients.All.SendAsync("RoundEnded");
         Timer.Stop();
     }
     public void ResetTimer()
     {
         if (Timer is not null)
         {
-            Timer.Elapsed -= OnTimerElapsed;
-            Timer.Stop();
+            Timer.Elapsed -= OnTimerElapsed;            
             Timer.Dispose();
         }
         Timer = new Timer(_roundTimer);
         Timer.Elapsed += OnTimerElapsed;
     }
+
+    public async Task FetchAnswersAsync()
+    {
+        await _hubContext.Clients.All.SendAsync("GetAnswers");
+    }
+
 
     private void OnTimerElapsed(object? state, ElapsedEventArgs e)
     {
@@ -66,7 +85,7 @@ public interface IState
 }
 
 public class SetUp : IState
-{   
+{
     //fetch question
     private async Task<QuestionDto> GetQuestionAsync()
     {
@@ -74,48 +93,41 @@ public class SetUp : IState
         //TODO: change this to use a result pattern
         return question ?? new QuestionDto("blabla", true);
     }    
-
-    //TODO: implement a new round starting notification system
     public async Task ExecuteAsync(Game game)
     {
         var quest = await GetQuestionAsync();
-        game.SwitchQuestion(quest);
+        await game.SwitchQuestion(quest);
         game.ResetTimer();
         game.SwitchState(new Execution());
     }
 }
 public class Execution : IState
 {
-    private readonly TaskCompletionSource<bool> _timerElapsed = new();    
-    private void StartRound(Game game) => game.StartRound();   
-    private void StopRound(Game game) => game.StopRound();    
+    private readonly TaskCompletionSource<bool> _timerElapsed = new();
+   
     public async Task ExecuteAsync(Game game)
     {
-        StartRound(game);
+        await game.StartRound();
 
         await _timerElapsed.Task;
 
-        StopRound(game);
+        await game.StopRound();
 
         game.SwitchState(new End());
     }
     public void OnTimerElapsed()
-    {        
+    {
         _timerElapsed.TrySetResult(true);
     }
 }
 
 public class End : IState
 {
-    //Fetch Answers
-    private async Task GetAnswersAsync()
-    {        
-        throw new NotImplementedException();
-    }
     //Call SetUp
     public async Task ExecuteAsync(Game game)
     {
-        //evaluete answers
+        //fetch answers from clients
+        await game.FetchAnswersAsync();
         game.SwitchState(new SetUp());
     }
 }

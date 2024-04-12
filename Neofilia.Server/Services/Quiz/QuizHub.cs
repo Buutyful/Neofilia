@@ -18,7 +18,7 @@ public class QuizHub : Hub
         return base.OnConnectedAsync();
     }
 
-    public async Task<TableDto> JoinTable(
+    public async Task JoinTable(
         LocalId localId, 
         TableId tableId, 
         NotEmptyString userName)
@@ -35,12 +35,14 @@ public class QuizHub : Hub
         if (local is null || table is null) throw new ArgumentException("local or table not found");
 
         local.AddPartecipantToTable(partecipant, table);
+        
+        var groupKey = tableId.Value.ToString();
+
+        await Groups.AddToGroupAsync(Context.ConnectionId, groupKey);
 
         var test = new TableDto("test");
 
-        await Clients.Caller.SendAsync("Joined", test);
-
-        return test;        
+        await Clients.Groups(groupKey).SendAsync("UserJoined", test);       
     }
 
     public static async Task CreateSignalRGroups(IServiceProvider serviceProvider)
@@ -60,5 +62,5 @@ public class QuizHub : Hub
     }
 }
 
-//empty dto for design purpose
+//empty dto for demo purpose
 public record TableDto(string Test);
