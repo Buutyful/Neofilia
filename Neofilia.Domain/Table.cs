@@ -1,4 +1,5 @@
-﻿using static Neofilia.Domain.Local;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using static Neofilia.Domain.Local;
 using static Neofilia.Domain.Table;
 
 
@@ -22,8 +23,10 @@ public class Table : IEquatable<Table>
     public TableId Id { get; private set; } //PK
     public LocalId LocalId { get; private set; } //FK: Locals{ID}, REQUIRED
 
+    //Probably will let a background service hook into this
     public event EventHandler<RewardGeneratedEvent>? RewardGenerated;
     public int TableNumber { get; private set; } //should this match the id?
+    [NotMapped]
     public int TableScore 
     { get => _currentScore;
       private set

@@ -68,9 +68,8 @@ public class Game(IHubContext<QuizHub> hubContext)
             "timer elapsed while the game was not in execution");
     }
 
-    public async Task Run(IState initialState)
-    {
-        _currentState = initialState;
+    public async Task Run()
+    {        
         //TODO: change this to match the event duration
         while (true)
         {

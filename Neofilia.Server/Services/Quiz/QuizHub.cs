@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Neofilia.Domain;
 using Neofilia.Server.Data.Repository;
+using System.Collections.Concurrent;
 using static Neofilia.Domain.Local;
 using static Neofilia.Domain.Table;
 
@@ -12,7 +13,7 @@ public class QuizHub : Hub
     //per avere il contesto in cui il tavolo esiste:
     //ex: che tipo di rewards offre il locale?   
     private static readonly List<Local> Locals = [];
-    private static readonly Dictionary<string, TableId> Players = [];
+    private static readonly ConcurrentDictionary<string, TableId> Players = [];
 
     public override Task OnConnectedAsync()
     {        
