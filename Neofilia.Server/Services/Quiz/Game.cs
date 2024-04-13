@@ -68,10 +68,10 @@ public class Game(IHubContext<QuizHub> hubContext)
             "timer elapsed while the game was not in execution");
     }
 
-    public async Task Run()
+    //TODO: test this
+    public async Task Run(CancellationToken cancellationToken)
     {        
-        //TODO: change this to match the event duration
-        while (true)
+        while (!cancellationToken.IsCancellationRequested)
         {
             await _currentState.ExecuteAsync(this);
         }
@@ -90,7 +90,8 @@ public class SetUp : IState
     {
         var question = await QuizService.GetQuestionDtoAsync();
         //TODO: change this to use a result pattern
-        return question ?? new QuestionDto("blabla", true);
+        if(question is null) return new QuestionDto("FAILED, TEST", true);
+        return question;
     }    
     public async Task ExecuteAsync(Game game)
     {
