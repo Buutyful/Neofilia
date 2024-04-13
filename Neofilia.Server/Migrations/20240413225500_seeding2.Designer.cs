@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Neofilia.Server.Data;
 
@@ -11,9 +12,11 @@ using Neofilia.Server.Data;
 namespace Neofilia.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240413225500_seeding2")]
+    partial class seeding2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -295,17 +298,17 @@ namespace Neofilia.Server.Migrations
                         {
                             Id = "8e445865-a24d-4543-a6c6-9443d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b29ac876-f02b-4ba1-91bd-e04f14f4170b",
-                            Email = "nofilia_admin@libero.it",
+                            ConcurrencyStamp = "5c577b35-599f-4eef-8cca-3f3980b1e4af",
+                            Email = "NOFILIA_ADMIN@LIBERO.IT",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "NOFILIA_ADMIN@LIBERO.IT",
-                            NormalizedUserName = "NOFILIA_ADMIN@LIBERO.IT",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOeICvzvFdP4QBlFOwXfCNBllQnkBsX0KTZhe7wxLQ+93jIFuRo7pIIJ1e60+f128g==",
+                            NormalizedUserName = "ADMINUSER",
+                            PasswordHash = "AQAAAAIAAYagAAAAECK90/n3u+9ztufUq/USRJkMhmyrqJNs1wG1Rr1KvP15uXMBoHVhHzJ/b9cjWTUS5A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "22d48c04-92e8-472a-9173-0140adfcdfc2",
+                            SecurityStamp = "b9d7b5d6-516f-4719-bbae-cf0aa6b299c7",
                             TwoFactorEnabled = false,
-                            UserName = "nofilia_admin@libero.it"
+                            UserName = "AdminUser"
                         });
                 });
 

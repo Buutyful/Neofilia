@@ -41,7 +41,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             });
 
         //a hasher to hash the password before seeding the user to the db
-        var hasher = new PasswordHasher<IdentityUser>();
+        var hasher = new PasswordHasher<ApplicationUser>();
 
 
         //Seeding the User to AspNetUsers table
@@ -49,11 +49,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             new ApplicationUser
             {
                 Id = "8e445865-a24d-4543-a6c6-9443d048cdb9", // primary key
-                UserName = "AdminUser",
-                NormalizedUserName = "ADMINUSER",
-                Email = "NOFILIA_ADMIN@LIBERO.IT",
+                UserName = "nofilia_admin@libero.it",
+                NormalizedUserName = "NOFILIA_ADMIN@LIBERO.IT",
+                Email = "nofilia_admin@libero.it",
                 NormalizedEmail = "NOFILIA_ADMIN@LIBERO.IT",
-                EmailConfirmed = true,
+                EmailConfirmed = true,                
                 PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
             });
 
