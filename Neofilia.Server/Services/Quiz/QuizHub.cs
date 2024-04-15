@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.DependencyInjection;
 using Neofilia.Domain;
 using Neofilia.Server.Data.Repository;
 using System.Collections.Concurrent;
@@ -14,8 +15,9 @@ public class QuizHub : Hub
     //lista di locali, accedere ai tavoli dal locale
     //per avere il contesto in cui il tavolo esiste:
     //ex: che tipo di rewards offre il locale?   
-    private static readonly List<Local> Locals = [];
+    private readonly static List<Local> Locals = [];
     private static readonly ConcurrentDictionary<string, TableId> Players = [];
+    
 
     public override Task OnConnectedAsync()
     {        
@@ -77,16 +79,23 @@ public class QuizHub : Hub
     {
         using (var scope = serviceProvider.CreateScope())
         {
-            var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<QuizHub>>();
-            var localRepo = scope.ServiceProvider.GetRequiredService<ILocalRepository>();
+            var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<QuizHub>>();            
 
-            var locals = await localRepo.Get();
+            var locals = await GetLocalsAsync(serviceProvider);            
+            Locals.AddRange(locals);
             // Create a SignalR group for each table
             foreach (var table in locals.SelectMany(l => l.Tables))
             {
                 await hubContext.Groups.AddToGroupAsync("", table.Id.Value.ToString());
             }
         }
+    }
+    private static async Task<List<Local>> GetLocalsAsync(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();        
+        var localRepo = scope.ServiceProvider.GetRequiredService<ILocalRepository>();
+        var locals = await localRepo.Get();
+        return locals;
     }
 }
 
