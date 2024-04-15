@@ -1,5 +1,6 @@
 ﻿@page "/game"
 @using Microsoft.AspNetCore.SignalR.Client
+@using Neofilia.Domain
 @using Neofilia.Server.Services.Quiz
 @using static Neofilia.Domain.Table
 @using static Neofilia.Domain.Local
@@ -62,7 +63,7 @@ else
                 "JoinTable",
                 new LocalId(LocalId),
                 new TableId(TableId),
-                _username);
+                new NotEmptyString(_username));
            
             _isConnected = true;
         }
