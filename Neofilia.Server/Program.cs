@@ -15,6 +15,8 @@ builder.Services.AddIdentityServices(builder.Configuration);
 //Add context repos
 builder.Services.AddPersistence();
 
+builder.Services.AddSignalR();
+
 
 var app = builder.Build();
 
@@ -40,6 +42,7 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
+app.MapHub<QuizHub>(QuizHub.HubUrl);
 
 await QuizHub.CreateSignalRGroups(app.Services);
 

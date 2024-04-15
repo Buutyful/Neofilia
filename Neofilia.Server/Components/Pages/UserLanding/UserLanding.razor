@@ -1,0 +1,101 @@
+﻿@page "/game"
+@using Microsoft.AspNetCore.SignalR.Client
+@using Neofilia.Server.Services.Quiz
+@using static Neofilia.Domain.Table
+@using static Neofilia.Domain.Local
+@inject NavigationManager navigationManager
+@implements IAsyncDisposable
+
+<h3>UserLanding</h3>
+
+@if (!_isConnected)
+{
+    <p>
+        Enter your name to join:
+    </p>
+
+    <input type="text" maxlength="32" @bind="_username" />
+    <button @onclick="ConnectAsync">Chat!</button>
+
+    // Error messages
+    @if (_message != null)
+    {
+        <div class="invalid-feedback">@_message</div>
+        <small id="emailHelp" class="form-text text-muted">@_message</small>
+    }
+}
+else
+{
+    <div class="alert alert-secondary mt-4" role="alert">
+        <span class="oi oi-person mr-2" aria-hidden="true"></span>
+        <span>You are connected as <b>@_username</b></span>
+        <button class="btn btn-sm btn-warning ml-md-auto" @onclick="DisconnectAsync">Disconnect</button>
+    </div>
+}
+
+@code
+{
+    private HubConnection? _hubConnection;
+    private bool _isConnected = false;
+    private string? _username;
+    private string? _message;
+
+    [SupplyParameterFromQuery]
+    public int LocalId { get; set; }
+    [SupplyParameterFromQuery]
+    public int TableId { get; set; }
+
+    public async Task ConnectAsync()
+    {
+        // check username is valid
+        if (string.IsNullOrWhiteSpace(_username))
+        {
+            _message = "Please enter a name";
+            return;
+        }
+        try
+        {
+            _hubConnection = ConnetionBuilder();
+            await _hubConnection.StartAsync();
+            //TODO: Maybe implement strongly typed Hubs
+            await _hubConnection.SendAsync(
+                "JoinTable",
+                new LocalId(LocalId),
+                new TableId(TableId),
+                _username);
+           
+            _isConnected = true;
+        }
+        catch (Exception e)
+        {
+            _message = $"ERROR: Failed to start client: {e.Message}";
+            _isConnected = false;
+        }
+    }
+    private async Task DisconnectAsync()
+    {
+        if (_isConnected && _hubConnection is not null)
+        {            
+            await _hubConnection.StopAsync();
+            await _hubConnection.DisposeAsync();
+
+            _hubConnection = null;
+            _isConnected = false;
+        }
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.StopAsync();
+            await _hubConnection.DisposeAsync();
+        }
+        await Task.CompletedTask;
+    }
+
+    private string HubUrlBuilder() => navigationManager.BaseUri + QuizHub.HubUrl;
+    private HubConnection ConnetionBuilder() => new HubConnectionBuilder()
+                .WithUrl(HubUrlBuilder())
+                .Build();
+
+}

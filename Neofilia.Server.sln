@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neofilia.Domain", "Neofilia
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neofilia.Contracts", "Neofilia.Contracts\Neofilia.Contracts.csproj", "{4F4C7F86-70A6-4EAB-BDBF-3FBDC8AB9F84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neofilia.UnitTests", "Neofilia.UnitTests\Neofilia.UnitTests.csproj", "{C692EF97-C67D-4E4D-B314-6887CBCDEC25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neofilia.UnitTests", "Neofilia.UnitTests\Neofilia.UnitTests.csproj", "{C692EF97-C67D-4E4D-B314-6887CBCDEC25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -7,8 +7,10 @@ using static Neofilia.Domain.Table;
 
 namespace Neofilia.Server.Services.Quiz;
 
+
 public class QuizHub : Hub
 {
+    public const string HubUrl = "quiz/quizhub";
     //lista di locali, accedere ai tavoli dal locale
     //per avere il contesto in cui il tavolo esiste:
     //ex: che tipo di rewards offre il locale?   
