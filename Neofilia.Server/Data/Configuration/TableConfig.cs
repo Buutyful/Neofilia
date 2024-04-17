@@ -27,6 +27,7 @@ public class TableConfig : IEntityTypeConfiguration<Table>
 
             rewardBuilder.HasKey(nameof(Reward.Id), "TableId");
 
+
             rewardBuilder.WithOwner()
                          .HasForeignKey(r => r.TableId);
 
@@ -35,6 +36,10 @@ public class TableConfig : IEntityTypeConfiguration<Table>
                          .HasConversion(
                           rewardId => rewardId.Id,
                           value => new Reward.RewardId(value));
+
+            rewardBuilder.Property(x => x.Id)
+              .ValueGeneratedOnAdd()
+              .UseIdentityColumn();
 
             rewardBuilder.Property(r => r.Type)
                          .HasConversion(

@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Neofilia.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class test1 : Migration
+    public partial class first : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,6 +50,25 @@ namespace Neofilia.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Locals",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Address_Street = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Address_CivilNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Address_PhoneNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    EventStartsAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    EventEndsAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Locals", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -157,34 +178,11 @@ namespace Neofilia.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Locals",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Address_Street = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Address_CivilNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Address_PhoneNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    EventStartsAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    EventEndsAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Locals", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Locals_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Menus",
                 columns: table => new
                 {
-                    MenuId = table.Column<int>(type: "int", nullable: false),
+                    MenuId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     LocalId = table.Column<int>(type: "int", nullable: false),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -223,7 +221,8 @@ namespace Neofilia.Server.Migrations
                 name: "Rewards",
                 columns: table => new
                 {
-                    RewardId = table.Column<int>(type: "int", nullable: false),
+                    RewardId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     TableId = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Money = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -241,6 +240,25 @@ namespace Neofilia.Server.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "2c5e174e-3b0e-446f-86af-483d56fd6109", null, "LocalManager", "LOCALMANAGER" },
+                    { "2c5e174e-3b0e-446f-86af-483d56fd7210", null, "Admin", "ADMIN" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "8e445865-a24d-4543-a6c6-9443d048cdb9", 0, "80d9df37-ec05-432f-b13d-3de44a339441", "nofilia_admin@libero.it", true, false, null, "NOFILIA_ADMIN@LIBERO.IT", "NOFILIA_ADMIN@LIBERO.IT", "AQAAAAIAAYagAAAAEABtqKbWAn9MszRMTJlgTwP6fBrjB5LMJ9t63LZzoYZAzYg6+/9phvCHJ7llPxOWwQ==", null, false, "109b2853-5978-47d2-beaf-c08abf981059", false, "nofilia_admin@libero.it" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "2c5e174e-3b0e-446f-86af-483d56fd7210", "8e445865-a24d-4543-a6c6-9443d048cdb9" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -282,9 +300,10 @@ namespace Neofilia.Server.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Locals_ApplicationUserId",
+                name: "IX_Locals_Email",
                 table: "Locals",
-                column: "ApplicationUserId");
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Menus_LocalId",
@@ -331,13 +350,13 @@ namespace Neofilia.Server.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "Tables");
 
             migrationBuilder.DropTable(
                 name: "Locals");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
         }
     }
 }

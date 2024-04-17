@@ -1,7 +1,8 @@
 ﻿@page "/locals/delete"
+@using Microsoft.AspNetCore.Authorization
 @inject ILocalRepository DB
 @inject NavigationManager NavigationManager
-
+@attribute [Authorize(Roles = "Admin")]
 <PageTitle>Delete</PageTitle>
 
 <h1>Delete</h1>

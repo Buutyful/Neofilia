@@ -1,6 +1,7 @@
 ﻿@page "/locals"
+@using Microsoft.AspNetCore.Authorization
 @inject ILocalRepository DB
-
+@attribute [Authorize(Roles = "Admin")]
 <PageTitle>Index</PageTitle>
 
 <h1>Index</h1>

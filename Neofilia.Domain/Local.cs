@@ -5,7 +5,7 @@ namespace Neofilia.Domain;
 //Aggregate root
 //Local must have many Tables
 //Local may own many Menus
-//UserManager may have many Locals
+
 
 
 public class Local
@@ -16,7 +16,7 @@ public class Local
 
     public readonly record struct LocalId(int Value);
     public LocalId Id { get; private set; } //PK
-    public string ApplicationUserId { get; private set; } //FK: ApplicationUser{ID}, NOT REQUIRED, IdentityUser
+    public NotEmptyString Email { get; private set; }
     public NotEmptyString Name { get; private set; }
     public Address Address { get; private set; }
     public DateTimeOffset EventStartsAt { get; private set; }
@@ -27,7 +27,7 @@ public class Local
     public IReadOnlyList<Menu> Menus => _menus.AsReadOnly();
 
     public Local(
-        string manager,
+        string email,
         string name,
         Address address,
         DateTimeOffset eventStartsAt,
@@ -35,7 +35,7 @@ public class Local
         ICollection<Table> tables,
         ICollection<Menu> menuIds)
     {
-        ApplicationUserId = manager;
+        Email = new NotEmptyString(email);
         Name = new NotEmptyString(name);
         Address = address;
         if (eventStartsAt > eventEndsAt)
@@ -103,6 +103,47 @@ public class Local
         current.RemovePartecipant(partecipant);
         other.AddPartecipant(partecipant);
     }
+
+
+    private Local(
+    int id,
+    string email,
+    string name,
+    Address address,
+    DateTimeOffset eventStartsAt,
+    DateTimeOffset eventEndsAt,
+    ICollection<Table> tables,
+    ICollection<Menu> menuIds)
+    {
+        Id = new LocalId(id);
+        Email = new NotEmptyString(email);
+        Name = new NotEmptyString(name);
+        Address = address;
+        if (eventStartsAt > eventEndsAt)
+            throw new InvalidOperationException("Event needs to start before it ends");
+        EventStartsAt = eventStartsAt;
+        EventEndsAt = eventEndsAt;
+        _tables = [.. tables];
+        _menus = [.. menuIds];
+    }
+    public static Local CreateTestLocal(int id) =>
+        new Local(
+                id,
+                "test@gmail.com",
+                "testLocal",
+                new Address(new NotEmptyString("test"),
+                            new NotEmptyString("test"),
+                            new NotEmptyString("test")),
+                DateTimeOffset.UtcNow,
+                DateTimeOffset.UtcNow.AddDays(1),
+                new List<Table>()
+                {
+                    Table.CreateTestTable(new Table.TableId(1), new Local.LocalId(1), 1)
+                },
+                new List<Menu>()
+                {
+                    Menu.CreateTestMenu(new Menu.MenuId(1), new Uri("http://example.com"))
+                });
 }
 
 public readonly record struct NotEmptyString(string Value)

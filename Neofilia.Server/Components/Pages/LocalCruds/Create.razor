@@ -1,8 +1,9 @@
 ﻿@page "/locals/create"
+@using Microsoft.AspNetCore.Authorization
 @inject ILocalRepository DB
 
 @inject NavigationManager NavigationManager
-
+@attribute [Authorize(Roles = "Admin")]
 <PageTitle>Create</PageTitle>
 
 <h1>Create</h1>

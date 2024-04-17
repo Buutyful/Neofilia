@@ -12,8 +12,8 @@ using Neofilia.Server.Data;
 namespace Neofilia.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240403212655_test1")]
-    partial class test1
+    [Migration("20240417222759_first")]
+    partial class first
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,20 @@ namespace Neofilia.Server.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "2c5e174e-3b0e-446f-86af-483d56fd7210",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "2c5e174e-3b0e-446f-86af-483d56fd6109",
+                            Name = "LocalManager",
+                            NormalizedName = "LOCALMANAGER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -137,6 +151,13 @@ namespace Neofilia.Server.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "8e445865-a24d-4543-a6c6-9443d048cdb9",
+                            RoleId = "2c5e174e-3b0e-446f-86af-483d56fd7210"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -166,8 +187,10 @@ namespace Neofilia.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("EventEndsAt")
                         .HasColumnType("datetimeoffset");
@@ -182,7 +205,8 @@ namespace Neofilia.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Locals");
                 });
@@ -271,6 +295,24 @@ namespace Neofilia.Server.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "8e445865-a24d-4543-a6c6-9443d048cdb9",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "80d9df37-ec05-432f-b13d-3de44a339441",
+                            Email = "nofilia_admin@libero.it",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "NOFILIA_ADMIN@LIBERO.IT",
+                            NormalizedUserName = "NOFILIA_ADMIN@LIBERO.IT",
+                            PasswordHash = "AQAAAAIAAYagAAAAEABtqKbWAn9MszRMTJlgTwP6fBrjB5LMJ9t63LZzoYZAzYg6+/9phvCHJ7llPxOWwQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "109b2853-5978-47d2-beaf-c08abf981059",
+                            TwoFactorEnabled = false,
+                            UserName = "nofilia_admin@libero.it"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -326,10 +368,6 @@ namespace Neofilia.Server.Migrations
 
             modelBuilder.Entity("Neofilia.Domain.Local", b =>
                 {
-                    b.HasOne("Neofilia.Server.Data.ApplicationUser", null)
-                        .WithMany("ManagedLocals")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.OwnsOne("Neofilia.Domain.Address", "Address", b1 =>
                         {
                             b1.Property<int>("LocalId")
@@ -361,8 +399,11 @@ namespace Neofilia.Server.Migrations
                     b.OwnsMany("Neofilia.Domain.Menu", "Menus", b1 =>
                         {
                             b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
                                 .HasColumnType("int")
                                 .HasColumnName("MenuId");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<int>("LocalId")
                                 .HasColumnType("int");
@@ -397,8 +438,11 @@ namespace Neofilia.Server.Migrations
                     b.OwnsOne("Neofilia.Domain.Reward", "Reward", b1 =>
                         {
                             b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
                                 .HasColumnType("int")
                                 .HasColumnName("RewardId");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<int>("TableId")
                                 .HasColumnType("int");
@@ -436,11 +480,6 @@ namespace Neofilia.Server.Migrations
             modelBuilder.Entity("Neofilia.Domain.Local", b =>
                 {
                     b.Navigation("Tables");
-                });
-
-            modelBuilder.Entity("Neofilia.Server.Data.ApplicationUser", b =>
-                {
-                    b.Navigation("ManagedLocals");
                 });
 #pragma warning restore 612, 618
         }

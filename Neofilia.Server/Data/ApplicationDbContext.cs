@@ -15,16 +15,16 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-
-        modelBuilder.Entity<ApplicationUser>()
-                    .HasMany(user => user.ManagedLocals)
-                    .WithOne()
-                    .HasForeignKey(local => local.ApplicationUserId)
-                    .IsRequired(false);
+        //TODO: Implament a local management system
+        //modelBuilder.Entity<ApplicationUser>()
+        //            .HasMany(user => user.ManagedLocals)
+        //            .WithOne()
+        //            .HasForeignKey(local => local.ApplicationUserId)
+        //            .IsRequired(false);
 
         base.OnModelCreating(modelBuilder);
 
-        #region Seeding
+        #region Seeding User and Roles
         //Seeding a 'Administrator' role to AspNetRoles table
         modelBuilder.Entity<IdentityRole>().HasData(
             new IdentityRole
@@ -53,7 +53,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 NormalizedUserName = "NOFILIA_ADMIN@LIBERO.IT",
                 Email = "nofilia_admin@libero.it",
                 NormalizedEmail = "NOFILIA_ADMIN@LIBERO.IT",
-                EmailConfirmed = true,                
+                EmailConfirmed = true,
                 PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
             });
 
@@ -65,5 +65,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 UserId = "8e445865-a24d-4543-a6c6-9443d048cdb9"
             });
         #endregion
+        
     }
 }

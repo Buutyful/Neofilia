@@ -1,8 +1,9 @@
 ﻿@page "/locals/edit"
+@using Microsoft.AspNetCore.Authorization
 @using Neofilia.Domain
 @inject ILocalRepository DB
 @inject NavigationManager NavigationManager
-
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Edit</PageTitle>
 

@@ -20,7 +20,10 @@ public class LocalConfig : IEntityTypeConfiguration<Local>
                .ValueGeneratedOnAdd()
                .UseIdentityColumn();
 
+        builder.Property(c => c.Email).ConfigureNotEmptyString();
         builder.Property(c => c.Name).ConfigureNotEmptyString();
+
+        builder.HasIndex(x => x.Email).IsUnique();
 
         builder.OwnsOne(x => x.Address, addressBuilder =>
         {
@@ -46,6 +49,7 @@ public class LocalConfig : IEntityTypeConfiguration<Local>
 
             menuBuilder.HasKey(nameof(Menu.Id), "LocalId");
 
+
             menuBuilder.WithOwner()
                        .HasForeignKey("LocalId");
 
@@ -54,6 +58,10 @@ public class LocalConfig : IEntityTypeConfiguration<Local>
                        .HasConversion(
                         menuId => menuId.Id,
                         value => new Menu.MenuId(value));
+
+            menuBuilder.Property(x => x.Id)
+              .ValueGeneratedOnAdd()
+              .UseIdentityColumn();
         });
 
         builder.Metadata.FindNavigation(nameof(Local.Tables))!
