@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
 @using Neofilia.Server.Data
+@using System.Security.Claims
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ILogger<Login> Logger
@@ -91,7 +92,7 @@
         // To enable password failures to trigger account lockout, set lockoutOnFailure: true
         var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
         if (result.Succeeded)
-        {
+        {        
             Logger.LogInformation("User logged in.");
             RedirectManager.RedirectTo(ReturnUrl);
         }

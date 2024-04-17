@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Neofilia.Domain;
 using Neofilia.Server.Data.Repository;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using static Neofilia.Domain.Local;
 using static Neofilia.Domain.Table;
 
@@ -81,7 +82,8 @@ public class QuizHub : Hub
         {
             var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<QuizHub>>();            
 
-            var locals = await GetLocalsAsync(serviceProvider);            
+            var locals = await GetLocalsAsync(serviceProvider);
+            //TODO: this should not be created once per application lifetime            
             Locals.AddRange(locals);
             // Create a SignalR group for each table
             foreach (var table in locals.SelectMany(l => l.Tables))

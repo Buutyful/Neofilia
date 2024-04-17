@@ -47,8 +47,7 @@ else
     public int TableId { get; set; }
 
     public async Task ConnectAsync()
-    {
-        // check username is valid
+    {       
         if (string.IsNullOrWhiteSpace(_username))
         {
             _message = "Please enter a name";

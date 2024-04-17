@@ -1,8 +1,9 @@
 ﻿@page "/auth"
 
 @using Microsoft.AspNetCore.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Auth</PageTitle>
 
@@ -11,3 +12,22 @@
 <AuthorizeView>
     Hello @context.User.Identity?.Name!
 </AuthorizeView>
+
+@code {
+    private async Task CheckRoles()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user is not null && user.Identity.IsAuthenticated)
+        {
+            var isAdmin = user.IsInRole("Admin");
+            Console.WriteLine($"Is Admin: {isAdmin}");
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckRoles();
+    }
+}
