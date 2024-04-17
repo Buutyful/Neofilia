@@ -24,9 +24,9 @@ else
                 <ValidationSummary />
                 <input type="hidden" name="LocalModel.Id" value="@LocalModel.Id" />
                 <div class="mb-3">
-                    <label for="applicationuserid" class="form-label">ApplicationUserId:</label>
-                    <InputText id="applicationuserid" @bind-Value="LocalModel.ApplicationUserId" class="form-control" />
-                    <ValidationMessage For="() => LocalModel.ApplicationUserId" class="text-danger" />
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="LocalModel.Email" class="form-control" />
+                    <ValidationMessage For="() => LocalModel.Email" class="text-danger" />
                 </div>
                 <div class="mb-3">
                     <label for="name" class="form-label">Name:</label>
@@ -91,7 +91,7 @@ else
     // For more details, see https://aka.ms/RazorPagesCRUD.
     public async Task UpdateLocalModel()
     {
-        await DB.Update(Id, Local); //temporary TODO: implement proper contratc dtos
+        await DB.Update(Id, Local); //TODO: implement proper contratc dtos
 
         NavigationManager.NavigateTo("/localmodels");
     }

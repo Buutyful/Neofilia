@@ -5,8 +5,11 @@ namespace Neofilia.Server.Models;
 
 public class LocalModel
 {
-    public int Id { get; set; }  
-    public string ApplicationUserId { get; set; } = string.Empty;
+    public int Id { get; set; }
+
+    [Required(ErrorMessage = "Emial is required")]
+    [DataType(DataType.EmailAddress)]
+    public string Email { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Name is required")]
     [MaxLength(255, ErrorMessage = "Name cannot exceed 255 characters")]
@@ -32,7 +35,7 @@ public class LocalModel
     public DateTimeOffset EventEndsAt { get; set; }
 
     public Local ToLocal() =>
-        new(ApplicationUserId,
+        new(Email,
             Name,
             new Address(new NotEmptyString(Street),
                         new NotEmptyString(CivilNumber),

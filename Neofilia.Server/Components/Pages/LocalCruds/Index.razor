@@ -11,8 +11,9 @@
 </p>
 
 <QuickGrid Class="table" Items="FilteredItems" Pagination="State">
-    <PropertyColumn Property="localmodel => localmodel.ApplicationUserId" />
+    <PropertyColumn Property="localmodel => localmodel.Email" />
     <PropertyColumn Property="localmodel => localmodel.Name" />
+        @*TODO: wtf, why ? it is a valid element, need to check docs*@
      @*  <ColumnOptions>
             <div>
                 <input type="search" @bind="descriptionFilter" @bind:event="oninput" autofocus/>
