@@ -74,18 +74,14 @@ else
     public int Id { get; set; }
 
     [SupplyParameterFromForm]
-    public LocalModel? LocalModel { get; set; }
+    public LocalModel LocalModel { get; set; } = new();
     public Local? Local { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Local = await DB.GetById(Id);
-        LocalModel = Local?.ToModel() ?? null;
-
-        if (LocalModel is null)
-        {
-            NavigationManager.NavigateTo("notfound");
-        }
+        var local = await DB.GetById(Id);
+        if (local.IsError) NavigationManager.NavigateTo("notfound");
+        LocalModel = local.Value.ToModel();
     }
 
     // To protect from overposting attacks, enable the specific properties you want to bind to.

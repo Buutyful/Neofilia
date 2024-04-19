@@ -70,6 +70,6 @@
         //map localmodel to entity
         var local = LocalModel.ToLocal();
         await DB.Add(local);
-        NavigationManager.NavigateTo("/locals");
+        NavigationManager.NavigateTo("/locals", true);
     }
 }

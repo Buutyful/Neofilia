@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ErrorOr;
+using Microsoft.EntityFrameworkCore;
 using Neofilia.Domain;
 
 namespace Neofilia.Server.Data.Repository;
@@ -22,13 +23,15 @@ public class TableRepository(ApplicationDbContext context) : ITableRepository
     public async Task<List<Table>> Get()
     {
         var tables = await _context.Tables.ToListAsync();
-        return tables;
+        return tables is null ? [] : tables;
     }
 
-    public async Task<Table> GetById(int id)
+    public async Task<ErrorOr<Table>> GetById(int id)
     {
         var table = await _context.Tables.FindAsync(id);
-        return table;
+        return table is null ?
+            Error.NotFound() :
+            table;
     }
 
     public async Task Update(int id, Table entity)

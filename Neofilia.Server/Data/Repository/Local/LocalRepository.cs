@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ErrorOr;
+using Microsoft.EntityFrameworkCore;
 using Neofilia.Domain;
 using static Neofilia.Domain.Local;
 
@@ -25,14 +26,18 @@ public class LocalRepository(ApplicationDbContext context) : ILocalRepository
     public async Task<List<Local>> Get()
     {
         var locals = await _context.Locals.ToListAsync();
-        return locals;
+
+        return locals is null ? [] : locals;
     }
 
-    public async Task<Local> GetById(int id)
+    public async Task<ErrorOr<Local>> GetById(int id)
     {
         var localId = new LocalId(id);
         var local = await _context.Locals.FindAsync(localId);
-        return local;
+
+        return local is null ? 
+            Error.NotFound() :
+            local;
     }
 
     public async Task Update(int id, Local entity)

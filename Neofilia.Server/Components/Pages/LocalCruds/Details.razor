@@ -47,11 +47,7 @@
     protected override async Task OnInitializedAsync()
     {
         var local = await DB.GetById(Id);
-        localmodel = local?.ToModel() ?? null;
-
-        if (localmodel is null)
-        {
-            NavigationManager.NavigateTo("notfound");
-        }
+        if (local.IsError) NavigationManager.NavigateTo("notfound");
+        localmodel = local.Value.ToModel();
     }
 }
