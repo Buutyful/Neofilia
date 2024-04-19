@@ -54,4 +54,15 @@ public class LocalRepository(ApplicationDbContext context) : ILocalRepository
                              .SetProperty(l => l.EventStartsAt, entity.EventStartsAt)
                              .SetProperty(l => l.EventEndsAt, entity.EventEndsAt));
     }
+
+    public List<Table> GetLocalTables(int localId)
+    {
+        var id = new LocalId(localId);
+        var tables =  _context.Locals.Where(l => l.Id == id)
+                                     .Include(l => l.Tables)
+                                     .SelectMany(l => l.Tables)
+                                     .ToList();
+        return tables is null ?
+            [] : tables;
+    }
 }

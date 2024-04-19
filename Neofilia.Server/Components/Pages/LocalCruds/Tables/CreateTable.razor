@@ -1,0 +1,56 @@
+﻿@page "/locals/tables/create"
+@using Microsoft.AspNetCore.Authorization
+@using Neofilia.Domain
+@inject ITableRepository DB
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
+<PageTitle>Create</PageTitle>
+
+<h1>Create Table</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="TableModel" OnValidSubmit="AddTableModel" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <div class="mb-3">
+                <label for="tablenumber" class="form-label">Table Number:</label>
+                <InputNumber id="tablenumber" @bind-Value="TableModel.TableNumber" class="form-control" />
+                <ValidationMessage For="() => TableModel.TableNumber" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="rewardtype" class="form-label">Reward Type:</label>
+                <InputSelect id="rewardtype" @bind-Value="TableModel.RewardType" class="form-control">
+                    @foreach (var rewardType in Enum.GetNames(typeof(RewardType)))
+                    {
+                        <option value="@rewardType">@rewardType</option>
+                    }                    
+                </InputSelect>
+                <ValidationMessage For="() => TableModel.RewardType" class="text-danger" />
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/locals">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    public TableModel TableModel { get; set; } = new();
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task AddTableModel()
+    {
+        TableModel.LocalId = Id;
+        //map localmodel to entity
+        var table = TableModel.ToTable();
+        await DB.Add(table);
+        NavigationManager.NavigateTo($"locals/tables?id={Id}", true);
+    }
+}

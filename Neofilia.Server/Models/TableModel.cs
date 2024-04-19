@@ -10,7 +10,8 @@ public class TableModel
 
     [Required(ErrorMessage = "TableNumber is required")]
     [Range(1, int.MaxValue, ErrorMessage = "TableNumber must be a positive number")]
-    public int TableNumber { get; set; }
+    public int TableNumber { get; set; }    
+    public RewardType RewardType { get; set; }
     public Table ToTable() =>
         new(new Local.LocalId(LocalId), TableNumber);
 }

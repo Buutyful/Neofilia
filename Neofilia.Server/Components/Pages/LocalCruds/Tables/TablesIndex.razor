@@ -1,0 +1,48 @@
+﻿@page "/locals/tables"
+@using Microsoft.AspNetCore.Authorization
+@inject ILocalRepository localDB
+@inject ITableRepository tableDB
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
+<PageTitle>Tables Details</PageTitle>
+
+
+<h1>Index</h1>
+@*TODO: need to be able to add reward from same form.*@
+<p>
+    <a href="@($"locals/tables/create?id={Id}")">Create New</a> |
+</p>
+
+<QuickGrid Class="table" Items="FilteredItems" Pagination="State">
+
+    <PropertyColumn Property="tablemodel => tablemodel.TableNumber" />
+    <PropertyColumn Property="tablemodel => tablemodel.RewardType" />    
+
+    <TemplateColumn Context="tablemodel">
+        <a href="@($"locals/tables/edit?id={tablemodel.Id}")">Edit</a> |
+        <a href="@($"locals/tables/details?id={tablemodel.Id}")">Details</a> |
+        <a href="@($"locals/tables/delete?id={tablemodel.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+<Paginator State="State" />
+@code
+{
+    PaginationState State = new PaginationState { ItemsPerPage = 10 };
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    public List<TableModel> Items { get; set; } = [];
+    
+    public IQueryable<TableModel> FilteredItems => Items.AsQueryable();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(localDB is LocalRepository repo)
+        {
+            var tables = repo.GetLocalTables(Id);
+            Items = [.. tables.ToModelList()];
+        }
+        await base.OnInitializedAsync();
+    }
+}
