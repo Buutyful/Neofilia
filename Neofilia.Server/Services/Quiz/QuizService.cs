@@ -1,9 +1,11 @@
-﻿using System.Text.Json;
+﻿using ErrorOr;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Neofilia.Server.Services.Quiz;
 
 //using https://opentdb.com/api_config.php
+//TODO: replace console logs with an actuall logger
 public static class QuizService
 {
     private static readonly HttpClient _httpClient = new HttpClient();
@@ -11,18 +13,20 @@ public static class QuizService
     private static string? _sessionToken;
     private static DateTime _tokenExpiration;
 
-    public static async Task<QuestionDto?> GetQuestionDtoAsync()
+    public static async Task<ErrorOr<QuestionDto>> GetQuestionDtoAsync()
     {
         try
         {
             var question = await GetQuestionAsync();
 
-            return question != null ? Question.ConvertToDto(question) : null;
+            return question is not null ? 
+                Question.ConvertToDto(question) : 
+                Error.NotFound();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"An unexpected error occurred: {ex.Message}");
-            return null;
+            return Error.Unexpected(description: ex.Message);
         }
     }
     private static async Task<string?> GetJsonFromApiAsync()

@@ -89,9 +89,12 @@ public class SetUp : IState
     private async Task<QuestionDto> GetQuestionAsync()
     {
         var question = await QuizService.GetQuestionDtoAsync();
-        //TODO: change this to use a result pattern
-        if(question is null) return new QuestionDto("FAILED, TEST", true);
-        return question;
+        if (question.IsError)
+        {
+            //TODO: implement in-memory backup questions
+            return new QuestionDto("FAILED, TEST", true);
+        }
+        return question.Value;
     }    
     public async Task ExecuteAsync(Game game)
     {
@@ -122,8 +125,7 @@ public class Execution : IState
 }
 
 public class End : IState
-{
-    //Call SetUp
+{    
     public async Task ExecuteAsync(Game game)
     {
         //fetch answers from clients
