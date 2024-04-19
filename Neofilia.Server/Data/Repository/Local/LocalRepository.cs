@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Neofilia.Domain;
+using static Neofilia.Domain.Local;
 
 namespace Neofilia.Server.Data.Repository;
 
-//basic implementation, TODO: implement it properly
+//TODO: implement it properly
 public class LocalRepository(ApplicationDbContext context) : ILocalRepository
 {
     private readonly ApplicationDbContext _context = context;
@@ -16,7 +17,8 @@ public class LocalRepository(ApplicationDbContext context) : ILocalRepository
 
     public async Task Delete(int id)
     {
-        await _context.Locals.Where(l => l.Id.Value == id)
+        var localId = new LocalId(id);
+        await _context.Locals.Where(l => l.Id == localId)
                              .ExecuteDeleteAsync();
     }
 
@@ -28,19 +30,22 @@ public class LocalRepository(ApplicationDbContext context) : ILocalRepository
 
     public async Task<Local> GetById(int id)
     {
-        var local = await _context.Locals.FindAsync(id);
+        var localId = new LocalId(id);
+        var local = await _context.Locals.FindAsync(localId);
         return local;
     }
 
     public async Task Update(int id, Local entity)
-    {
-        await _context.Locals.Where(l => l.Id.Value == id)
+    {        
+        var localId = new LocalId(id);
+        await _context.Locals.Where(l => l.Id == localId)
                              .ExecuteUpdateAsync(setters => setters
                              .SetProperty(l => l.Name, entity.Name)
-                             .SetProperty(l => l.Address, entity.Address)
+                             .SetProperty(l => l.Email, entity.Email)
+                             .SetProperty(l => l.Address.Street, entity.Address.Street)
+                             .SetProperty(l => l.Address.CivilNumber, entity.Address.CivilNumber)
+                             .SetProperty(l => l.Address.PhoneNumber, entity.Address.PhoneNumber)
                              .SetProperty(l => l.EventStartsAt, entity.EventStartsAt)
-                             .SetProperty(l => l.EventEndsAt, entity.EventEndsAt)
-                             .SetProperty(l => l.Menus, entity.Menus)
-                             .SetProperty(l => l.Tables, entity.Tables));
+                             .SetProperty(l => l.EventEndsAt, entity.EventEndsAt));
     }
 }

@@ -156,4 +156,15 @@ public readonly record struct NotEmptyString(string Value)
     public static implicit operator string(NotEmptyString value) => value.Value;
 }
 
-public record Address(NotEmptyString Street, NotEmptyString CivilNumber, NotEmptyString PhoneNumber);
+public record Address
+{
+    private Address() { }    
+    //ef needs setters
+    public NotEmptyString Street { get; private set; } 
+    public NotEmptyString CivilNumber { get; private set; } 
+    public NotEmptyString PhoneNumber { get; private set;}
+
+    public Address(NotEmptyString street, NotEmptyString civilNumber, NotEmptyString phoneNumber) =>
+        (Street, CivilNumber, PhoneNumber) = (street, civilNumber, phoneNumber);
+    
+};

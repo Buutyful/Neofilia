@@ -46,7 +46,7 @@
         </dl>
         <EditForm method="post" Model="localmodel" OnValidSubmit="DeleteLocalModel" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(localmodel is null)">Delete</button> |
-            <a href="/localmodels">Back to List</a>
+            <a href="/locals">Back to List</a>
         </EditForm>
     }
 </div>
@@ -71,6 +71,6 @@
     public async Task DeleteLocalModel()
     {
         await DB.Delete(Id);        
-        NavigationManager.NavigateTo("/locals");
+        NavigationManager.NavigateTo("/locals", true);
     }
 }

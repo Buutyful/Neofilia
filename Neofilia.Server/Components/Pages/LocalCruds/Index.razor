@@ -26,6 +26,7 @@
     <PropertyColumn Property="localmodel => localmodel.EventEndsAt" />
 
     <TemplateColumn Context="localmodel">
+        <a href="@($"locals/tables?id={localmodel.Id}")">Tables</a> |
         <a href="@($"locals/edit?id={localmodel.Id}")">Edit</a> |
         <a href="@($"locals/details?id={localmodel.Id}")">Details</a> |
         <a href="@($"locals/delete?id={localmodel.Id}")">Delete</a>

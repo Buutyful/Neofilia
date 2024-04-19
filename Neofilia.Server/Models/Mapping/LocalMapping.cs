@@ -8,7 +8,7 @@ public static class LocalMapping
         new()
         {
             Id = local.Id.Value,
-            ApplicationUserId = local.Email,
+            Email = local.Email,
             Name = local.Name,
             Street = local.Address.Street,
             CivilNumber = local.Address.CivilNumber,

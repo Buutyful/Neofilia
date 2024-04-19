@@ -1,6 +1,7 @@
 ﻿@page "/locals/edit"
 @using Microsoft.AspNetCore.Authorization
 @using Neofilia.Domain
+@using static Neofilia.Domain.Local
 @inject ILocalRepository DB
 @inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "Admin")]
@@ -65,7 +66,7 @@ else
 }
 
 <div>
-    <a href="/localmodels">Back to List</a>
+    <a href="/locals">Back to List</a>
 </div>
 
 @code {
@@ -91,9 +92,9 @@ else
     // For more details, see https://aka.ms/RazorPagesCRUD.
     public async Task UpdateLocalModel()
     {
-        await DB.Update(Id, Local); //TODO: implement proper contratc dtos
+        await DB.Update(Id, LocalModel.ToLocal()); //TODO: implement correctly
 
-        NavigationManager.NavigateTo("/localmodels");
+        NavigationManager.NavigateTo("/locals", true);
     }
    
 }
