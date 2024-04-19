@@ -1,4 +1,6 @@
-﻿using static Neofilia.Domain.Menu;
+﻿using ErrorOr;
+using Neofilia.Domain.Common.Errors;
+using static Neofilia.Domain.Menu;
 using static Neofilia.Domain.Table;
 
 namespace Neofilia.Domain;
@@ -10,6 +12,9 @@ namespace Neofilia.Domain;
 
 public class Local
 {
+    private readonly List<Error> _errors = [];
+    public IReadOnlyList<Error> LocalErrors => _errors.AsReadOnly();
+
     private readonly List<Table> _tables = [];
     private readonly List<Menu> _menus = [];
     private Local() { } //ef ctor
@@ -51,19 +56,26 @@ public class Local
     public void AddTable(Table table)
     {
         if (_tables.Any(t => t.Equals(table)))
-            throw new InvalidOperationException("cant have the same table two times: At(AddTable)");
+            _errors.Add(Errors.LocalErrors.DuplicatedTable);
         _tables.Add(table);
     }
     public void RemoveTable(TableId tableId)
     {
-        var table = _tables.FirstOrDefault(t => t.Id == tableId) ??
-            throw new InvalidOperationException("Table with given id was not found: At(RemoveTable)");
-        _tables.Remove(table);
+        var table = _tables.FirstOrDefault(t => t.Id == tableId);
+
+        if (table is null)
+            _errors.Add(Errors.LocalErrors.TableNotFound(tableId.Value));
+        else
+            _tables.Remove(table);
     }
     public void AddPartecipantToTable(Partecipant partecipant, Table table)
     {
-        var existingTable = _tables.FirstOrDefault(t => t.Equals(table))
-            ?? throw new InvalidOperationException("given table was not found in local: At(AddPartecipantToTable)");
+        var existingTable = _tables.FirstOrDefault(t => t.Equals(table));
+        if (existingTable is null)
+        {
+            _errors.Add(Errors.LocalErrors.TableNotFound(table.Id.Value));
+            return;
+        }
 
         if (_tables.Any(t => t.Partecipants
                    .Any(p => p == partecipant)))
@@ -88,7 +100,8 @@ public class Local
     public void AddMenu(Menu menu)
     {
         if (_menus.Any(m => m.Id.Equals(menu.Id)))
-            throw new InvalidOperationException("cant have the same menu two times");
+            _errors.Add(Errors.LocalErrors.DuplicatedMenu);
+
         _menus.Add(menu);
     }
     public void RemoveMenu(MenuId menuId)
@@ -158,13 +171,13 @@ public readonly record struct NotEmptyString(string Value)
 
 public record Address
 {
-    private Address() { }    
+    private Address() { }
     //ef needs setters
-    public NotEmptyString Street { get; private set; } 
-    public NotEmptyString CivilNumber { get; private set; } 
-    public NotEmptyString PhoneNumber { get; private set;}
+    public NotEmptyString Street { get; private set; }
+    public NotEmptyString CivilNumber { get; private set; }
+    public NotEmptyString PhoneNumber { get; private set; }
 
     public Address(NotEmptyString street, NotEmptyString civilNumber, NotEmptyString phoneNumber) =>
         (Street, CivilNumber, PhoneNumber) = (street, civilNumber, phoneNumber);
-    
+
 };

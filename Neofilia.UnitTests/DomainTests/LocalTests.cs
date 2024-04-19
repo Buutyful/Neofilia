@@ -2,6 +2,7 @@
 using static Neofilia.Domain.Menu;
 using System.Net;
 using System;
+using Neofilia.Domain.Common.Errors;
 
 namespace Neofilia.UnitTests.DomainTests;
 
@@ -56,11 +57,10 @@ public class LocalTests
         //Arrange
         var table = Table.CreateTestTable(new Table.TableId(1), new Local.LocalId(1), 1);
         var local = CreateTestLocal();
-        //Act and Assert
-        Assert.Throws<InvalidOperationException>(() => 
-        {
-            local.AddTable(table);
-        });
+        //Act
+        local.AddTable(table);
+        //Assert
+        Assert.Contains(Errors.LocalErrors.DuplicatedTable, local.LocalErrors);
     }
 
     [Fact]
@@ -86,12 +86,11 @@ public class LocalTests
         var guid = Guid.NewGuid().ToString();
         var table = Table.CreateTestTable(new Table.TableId(15), new Local.LocalId(1), 1);
         var partecipant = new Partecipant(table.Id, guid, new NotEmptyString());
-        var local = CreateTestLocal();       
-        //Act and Assert
-        Assert.Throws<InvalidOperationException>(() =>
-        {
-            local.AddPartecipantToTable(partecipant, table);
-        });
+        var local = CreateTestLocal();
+        //Act
+        local.AddPartecipantToTable(partecipant, table);
+        //Assert
+        Assert.Contains(Errors.LocalErrors.TableNotFound(table.Id.Value), local.LocalErrors);
     }
     private Local CreateTestLocal()
     {
