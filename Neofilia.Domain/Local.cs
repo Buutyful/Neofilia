@@ -117,7 +117,8 @@ public class Local
         other.AddPartecipant(partecipant);
     }
 
-
+    //for testing
+    #region Testing
     private Local(
     int id,
     string email,
@@ -157,6 +158,7 @@ public class Local
                 {
                     Menu.CreateTestMenu(new Menu.MenuId(1), new Uri("http://example.com"))
                 });
+    #endregion
 }
 
 public readonly record struct NotEmptyString(string Value)

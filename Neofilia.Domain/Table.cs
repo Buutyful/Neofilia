@@ -13,6 +13,7 @@ namespace Neofilia.Domain;
 //current idea: table is a lobby it self, when partecipants gain points on the runing challenge they add score points to the table lobby,
 //when a threshold is reached the table creates a reward that can be redeemed, table can have only 1 reward at a time)
 
+//TODO: add entity base class and inherit from it
 public class Table : IEquatable<Table>
 {
     private static readonly int _scoreCap = 100;

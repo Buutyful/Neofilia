@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using Neofilia.Domain;
+using Neofilia.Domain.Common.Errors;
 using static Neofilia.Domain.Local;
 
 namespace Neofilia.Server.Data.Repository;
@@ -36,7 +37,7 @@ public class LocalRepository(ApplicationDbContext context) : ILocalRepository
         var local = await _context.Locals.FindAsync(localId);
 
         return local is null ? 
-            Error.NotFound() :
+            Errors.LocalErrors.LocalNotFound(id) :
             local;
     }
 
