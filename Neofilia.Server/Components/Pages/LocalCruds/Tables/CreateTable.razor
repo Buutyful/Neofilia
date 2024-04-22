@@ -47,8 +47,7 @@
     // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
     public async Task AddTableModel()
     {
-        TableModel.LocalId = Id;
-        //map localmodel to entity
+        TableModel.LocalId = Id;        
         var table = TableModel.ToTable();
         await DB.Add(table);
         NavigationManager.NavigateTo($"locals/tables?id={Id}", true);

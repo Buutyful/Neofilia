@@ -27,6 +27,7 @@ public class Table : IEquatable<Table>
     //Probably will let a background service hook into this
     public event EventHandler<RewardGeneratedEvent>? RewardGenerated;
     public int TableNumber { get; private set; } //should this match the id?
+
     [NotMapped]
     public int TableScore 
     { get => _currentScore;
@@ -49,14 +50,17 @@ public class Table : IEquatable<Table>
         (LocalId, TableNumber) = (localId, tableNumber);
     public void AddPartecipant(Partecipant user) => _partecipants.Add(user);
     public void RemovePartecipant(Partecipant user) => _partecipants.Remove(user);
+    //TODO: implement socre system
     public void AddScore() => TableScore++;
     private void GenerateReward()
     {
-        //temporary reward system, missing implementation details
+        //TODO: implement reward system
         Reward = new Reward(RewardType.Drink, this.Id);
         OnRewardGenerated(new RewardGeneratedEvent(this.Id, Reward));
     }
     private void OnRewardGenerated(RewardGeneratedEvent e) => RewardGenerated?.Invoke(this, e);
+
+    //TODO: move this into a generic base entity class
     public bool Equals(Table? other) =>
         other is not null && Id.Equals(other.Id);
     public override bool Equals(object? obj) =>

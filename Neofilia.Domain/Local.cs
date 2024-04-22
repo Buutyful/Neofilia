@@ -59,6 +59,10 @@ public class Local
             _errors.Add(Errors.LocalErrors.DuplicatedTable);
         _tables.Add(table);
     }
+    public void AddTables(List<Table> tables)
+    {
+        foreach (Table table in tables) AddTable(table);
+    }
     public void RemoveTable(TableId tableId)
     {
         var table = _tables.FirstOrDefault(t => t.Id == tableId);

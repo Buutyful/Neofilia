@@ -3,8 +3,8 @@ using System.Timers;
 using Timer = System.Timers.Timer;
 
 namespace Neofilia.Server.Services.Quiz;
-//quiz loop manager class
-//TODO: Link this with signalR hub
+
+//TODO: add logging
 public class Game(IHubContext<QuizHub> hubContext)
 {
     private static readonly int _roundTimer = 60000;
@@ -68,7 +68,6 @@ public class Game(IHubContext<QuizHub> hubContext)
             "timer elapsed while the game was not in execution");
     }
 
-    //TODO: test this
     public async Task Run(CancellationToken cancellationToken)
     {        
         while (!cancellationToken.IsCancellationRequested)

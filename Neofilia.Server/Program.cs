@@ -17,6 +17,9 @@ builder.Services.AddPersistence();
 
 builder.Services.AddSignalR();
 
+//Add background services
+builder.Services.AddHostedService<ChallengeManager>();
+
 
 var app = builder.Build();
 

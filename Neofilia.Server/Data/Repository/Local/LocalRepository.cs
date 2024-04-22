@@ -65,4 +65,16 @@ public class LocalRepository(ApplicationDbContext context) : ILocalRepository
         return tables is null ?
             [] : tables;
     }
+    public async Task<List<Local>> GetLocalsWithTables()
+    {
+        var locals = await Get();
+
+        var localsWithTables = locals.Select(l =>
+        {
+            var tables = GetLocalTables(l.Id.Value);
+            l.AddTables(tables);
+            return l;
+        });
+        return localsWithTables.ToList();
+    }
 }

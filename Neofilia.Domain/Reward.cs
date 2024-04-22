@@ -5,6 +5,7 @@ namespace Neofilia.Domain;
 //use local time?
 //should a local have his own rewards?
 //should a reward be a base class for other rewards?
+//TODO: implement decorator pattern for different rewards types
 public class Reward
 {
     private Reward() { } //ef ctor
