@@ -57,8 +57,8 @@ public class QuizHub : Hub
         await Clients.Groups(groupKey).SendAsync("UserJoined", test);       
     }
     
-    public async Task SendAnswer(bool answer, Game game)
-    {
+    public async Task SendAnswer(bool answer)
+    {        
         var id = Context.ConnectionId;        
         if (!Players.TryGetValue(id, out TableId value))
         {
@@ -68,7 +68,7 @@ public class QuizHub : Hub
         var groupKey = tableId.Value.ToString();
         var table = Locals.SelectMany(l => l.Tables).FirstOrDefault(t => t.Id.Equals(tableId));
         //TODO: implement a functional score system
-        if (game?.Question?.CorrectAnswer == answer) table?.AddScore();
+        if (answer) table?.AddScore();
 
         await Clients.Groups(groupKey).SendAsync("ScoreUpdated", table?.TableScore);
     }

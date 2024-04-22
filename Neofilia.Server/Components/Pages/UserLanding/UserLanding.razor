@@ -1,9 +1,4 @@
 ﻿@page "/game"
-@using Microsoft.AspNetCore.SignalR.Client
-@using Neofilia.Domain
-@using Neofilia.Server.Services.Quiz
-@using static Neofilia.Domain.Table
-@using static Neofilia.Domain.Local
 @inject NavigationManager navigationManager
 @implements IAsyncDisposable
 
@@ -32,11 +27,15 @@ else
         <span>You are connected as <b>@_username</b></span>
         <button class="btn btn-sm btn-warning ml-md-auto" @onclick="DisconnectAsync">Disconnect</button>
     </div>
-
+    <div>
+        @*TODO: Change this into a table component, quiz will be part of table*@
+        <QuizComponent HubConnection="_hubConnection"/>
+    </div>
 }
 
 @code
 {
+    //test url string: /game?localId=1&tableId=1
     private HubConnection? _hubConnection;
     private bool _isConnected = false;
     private string? _username;

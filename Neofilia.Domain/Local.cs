@@ -9,7 +9,8 @@ namespace Neofilia.Domain;
 //Local may own many Menus
 
 
-
+//TODO change event dates to a proper challenge class,
+//missing implementation details
 public class Local
 {
     private readonly List<Error> _errors = [];

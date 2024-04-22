@@ -19,7 +19,7 @@ public class Game(IHubContext<QuizHub> hubContext)
     public async Task SwitchQuestion(QuestionDto question)
     {
         Question = question;
-        await _hubContext.Clients.All.SendAsync("QuestionChanged", Question.Text);
+        await _hubContext.Clients.All.SendAsync("QuestionChanged", question);
     }
     public void SwitchState(IState newState) => _currentState = newState;
     public async Task StartRound()

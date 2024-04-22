@@ -45,8 +45,11 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
+
+//Add hub endpoint
 app.MapHub<QuizHub>(QuizHub.HubUrl);
 
+//Set up methods
 await QuizHub.CreateSignalRGroups(app.Services);
 
 app.Run();

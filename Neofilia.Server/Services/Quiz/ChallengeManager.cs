@@ -20,8 +20,9 @@ namespace Neofilia.Server.Services.Quiz
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (await _timer.WaitForNextTickAsync(stoppingToken) &&
-                   !stoppingToken.IsCancellationRequested)
+            //while (await _timer.WaitForNextTickAsync(stoppingToken) &&
+            //       !stoppingToken.IsCancellationRequested)
+            while(true)
             {
                 _locals = await LocalHelpers.GetLocalsAsync(_serviceProvider);
                 //TODO: create a challenge class

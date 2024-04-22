@@ -1,0 +1,128 @@
+﻿@implements IAsyncDisposable
+@rendermode InteractiveServer
+﻿
+<style>
+    .quiz-container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f8f8f8;
+    }
+
+    .quiz-option {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .option-box {
+        width: 20px;
+        height: 20px;
+        border: 1px solid #000;
+        margin-right: 10px;
+    }
+
+    /* Add styles for selected state */
+    .quiz-option.selected .option-box {
+        background-color: #000;
+        /* Add any other styles to indicate selection */
+    }
+
+
+    .user-answers {
+        margin-top: 20px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 8px;
+    }
+</style>
+
+<div class="quiz-container">
+    @if (isRoundActive)
+    {
+        <div>
+            @currentQuestion.Text
+        </div>
+    }
+    else
+    {
+        <div>
+            Not active
+        </div>
+    }
+</div>
+@code
+{
+    //TODO: make this a cascade parameter
+    [Parameter]
+    public HubConnection HubConnection { get; init; } = null!;
+    private QuestionDto currentQuestion = new("blabla", true);
+    private int roundTimerInMs = 0;
+    private bool isRoundActive = false;
+    private bool currentAnswer;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //TODO: change this into a client strongly typed hub
+            HubConnection.On<QuestionDto>("QuestionChanged", q =>
+            {
+                currentQuestion = q;
+                InvokeAsync(() => StateHasChanged());
+            });
+
+            HubConnection.On<int>("RoundStarted", t =>
+            {
+                roundTimerInMs = t;
+                isRoundActive = true;
+                InvokeAsync(() => StateHasChanged());
+            });
+            HubConnection.On("RoundEnded", () =>
+            {
+                roundTimerInMs = 0;
+                isRoundActive = false;
+                InvokeAsync(() => StateHasChanged());
+            });
+
+            HubConnection.On("GetAnswers", async () =>
+            {
+                var ans = currentAnswer == currentQuestion.CorrectAnswer;
+                await HubConnection.SendAsync("SendAnswer", ans);
+
+            });
+        }
+        else
+        {
+
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    private void BroadcastGameState(TableDto gameState)
+    {
+        //update the UI from a background thread
+        InvokeAsync(() =>
+        {
+            StateHasChanged();
+        });
+    }
+
+    private void OnAnswerSelected(bool answer) => currentAnswer = answer;
+
+
+
+    public async ValueTask DisposeAsync()
+    {
+        await Task.CompletedTask;
+    }
+
+}
