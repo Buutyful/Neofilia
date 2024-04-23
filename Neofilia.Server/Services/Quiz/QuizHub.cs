@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using ErrorOr;
+using Microsoft.AspNetCore.SignalR;
 using Neofilia.Domain;
 using System.Collections.Concurrent;
 using static Neofilia.Domain.Local;
@@ -71,6 +72,23 @@ public class QuizHub : Hub
         if (answer) table?.AddScore();
 
         await Clients.Groups(groupKey).SendAsync("ScoreUpdated", table?.TableScore);
+    }
+
+    public ErrorOr<Table> GetTable(LocalId localId, TableId tableId)
+    {
+        var id = Context.ConnectionId;
+        if (!Players.TryGetValue(id, out TableId value))
+        {
+            return Error.Unauthorized(description: "partecipant has not joined a table");
+        }
+        if(tableId != value)
+        {
+            return Error.Unexpected(
+                description: "partecipant has joined a different table than the one requested");
+        }
+        var table = Locals.FirstOrDefault(l => l.Id.Equals(localId))!
+                    .Tables.First(t => t.Id.Equals(tableId));
+        return table;
     }
 
     public static async Task CreateSignalRGroups(IServiceProvider serviceProvider)

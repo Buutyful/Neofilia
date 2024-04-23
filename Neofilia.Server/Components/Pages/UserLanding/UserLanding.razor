@@ -1,4 +1,5 @@
 ﻿@page "/game"
+@using ErrorOr
 @inject NavigationManager navigationManager
 @implements IAsyncDisposable
 
@@ -31,6 +32,12 @@ else
         @*TODO: Add reward Component, Add partecipants Component*@
         <QuizComponent HubConnection="_hubConnection"/>
     </div>
+    if(_reward)
+    {
+        <div>
+            REWARD READY
+        </div>
+    }
 }
 
 @code
@@ -41,6 +48,8 @@ else
     private bool _isConnected = false;
     private string? _username;
     private string? _message;
+    //just for testing
+    private bool _reward = false;
 
     [SupplyParameterFromQuery]
     public int LocalId { get; set; }
@@ -58,13 +67,15 @@ else
         {
             _hubConnection = ConnetionBuilder();
             await _hubConnection.StartAsync();
-            //TODO: Maybe implement strongly typed Hubs
+            //TODO: Implement strongly typed Hubs
             await _hubConnection.SendAsync(
                 "JoinTable",
                 new LocalId(LocalId),
                 new TableId(TableId),
                 new NotEmptyString(_username));
-           
+
+            await GetTable();
+
             _isConnected = true;
         }
         catch (Exception e)
@@ -94,6 +105,27 @@ else
         await Task.CompletedTask;
     }
 
+    private async Task GetTable()
+    {
+        //TODO: implement event properly, now its just testing porpuse
+        if (_table is not null) _table = null;
+
+        var errorOrTable = await _hubConnection!.InvokeAsync<ErrorOr<Table>>(
+            "GetTable",
+             new LocalId(LocalId),
+             new TableId(TableId));
+
+        if (errorOrTable.IsError) _message = errorOrTable.FirstError.Description;
+        else
+        {
+            //TODO: BREAKING this doesnt return the value for some reason even if the table is returned correctly from hub, errorOr problem?
+            _table = errorOrTable.Value;
+            _table.RewardGenerated += (o, e) =>
+            {
+                _reward = true;
+            };
+        }
+    }
     private string HubUrlBuilder() => navigationManager.BaseUri + QuizHub.HubUrl;
     private HubConnection ConnetionBuilder() => new HubConnectionBuilder()
                 .WithUrl(HubUrlBuilder())
