@@ -50,7 +50,7 @@ public class Table : IEquatable<Table>
         (LocalId, TableNumber) = (localId, tableNumber);
     public void AddPartecipant(Partecipant user) => _partecipants.Add(user);
     public void RemovePartecipant(Partecipant user) => _partecipants.Remove(user);
-    //TODO: implement socre system
+    //TODO: implement socre system, currently its just summing itslef upward exponentialy
     public void AddScore() => TableScore++;
     private void GenerateReward()
     {

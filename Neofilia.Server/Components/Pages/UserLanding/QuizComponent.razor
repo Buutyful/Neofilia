@@ -1,6 +1,6 @@
-﻿@implements IAsyncDisposable
+﻿@implements IDisposable
 @rendermode InteractiveServer
-@using Timer = System.Timers.Timer;
+@using System.Timers;
 ﻿
 <style>
     .quiz-container {
@@ -51,10 +51,18 @@
     @if (isRoundActive)
     {
         <div>
-            @roundDuration
+            Timer: @roundDuration
         </div>
         <div>
-            @currentQuestion.Text
+            Question: @currentQuestion.Text
+        </div>
+        <button @onclick="() => currentAnswer = true">True</button>
+        <button @onclick="() => currentAnswer = false">False</button>
+        <div>
+            Current Answer: @currentAnswer
+        </div>
+        <div>
+            Table Score: @tableScore
         </div>
     }
     else
@@ -73,6 +81,7 @@
     private int roundDuration = 0;
     private int tableScore = 0;
     private Timer timer = new Timer(1000);
+    private ElapsedEventHandler? elapsedEventHandler;
     private bool isRoundActive = false;
     private bool currentAnswer;
 
@@ -104,6 +113,7 @@
 
             HubConnection.On<int>("ScoreUpdated", score =>
             {
+                //TODO: this will probably have race conditions, and will also get updated for every user to the table, it would be nice having an animation
                 tableScore = score;
                 InvokeAsync(() => StateHasChanged());
             });
@@ -115,7 +125,7 @@
 
             });
 
-            timer.Elapsed += (o, e) =>
+            timer.Elapsed += elapsedEventHandler = (o, e) =>
             {
                 if (roundDuration >= 0) roundDuration--;
 
@@ -128,22 +138,15 @@
         }
         await base.OnAfterRenderAsync(firstRender);
     }
-    private void BroadcastGameState(TableDto gameState)
+
+    public void Dispose()
     {
-        //update the UI from a background thread
-        InvokeAsync(() =>
+        if (elapsedEventHandler != null)
         {
-            StateHasChanged();
-        });
-    }
-
-    private void OnAnswerSelected(bool answer) => currentAnswer = answer;
-
-
-
-    public async ValueTask DisposeAsync()
-    {
-        await Task.CompletedTask;
+            timer.Elapsed -= elapsedEventHandler;
+            elapsedEventHandler = null;
+        }
+        timer.Dispose();
     }
 
 }
