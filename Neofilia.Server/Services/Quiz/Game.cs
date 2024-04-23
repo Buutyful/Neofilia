@@ -28,7 +28,7 @@ public class Game(IHubContext<QuizHub> hubContext)
         if (Timer is null)
             throw new InvalidOperationException("timer should not be null when round active");
 
-        await _hubContext.Clients.All.SendAsync("RoundStarted", _roundTimer);
+        await _hubContext.Clients.All.SendAsync("RoundStarted", _roundTimer / 1000);
         Timer.Start();
     }
     public async Task StopRound()

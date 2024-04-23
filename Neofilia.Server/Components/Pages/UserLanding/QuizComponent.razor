@@ -1,5 +1,6 @@
 ﻿@implements IAsyncDisposable
 @rendermode InteractiveServer
+@using Timer = System.Timers.Timer;
 ﻿
 <style>
     .quiz-container {
@@ -50,6 +51,9 @@
     @if (isRoundActive)
     {
         <div>
+            @roundDuration
+        </div>
+        <div>
             @currentQuestion.Text
         </div>
     }
@@ -66,7 +70,9 @@
     [Parameter]
     public HubConnection HubConnection { get; init; } = null!;
     private QuestionDto currentQuestion = new("blabla", true);
-    private int roundTimerInMs = 0;
+    private int roundDuration = 0;
+    private int tableScore = 0;
+    private Timer timer = new Timer(1000);
     private bool isRoundActive = false;
     private bool currentAnswer;
 
@@ -81,16 +87,24 @@
                 InvokeAsync(() => StateHasChanged());
             });
 
-            HubConnection.On<int>("RoundStarted", t =>
+            HubConnection.On<int>("RoundStarted", roundDuration =>
             {
-                roundTimerInMs = t;
+                this.roundDuration = roundDuration;
                 isRoundActive = true;
+                timer.Start();
                 InvokeAsync(() => StateHasChanged());
             });
+
             HubConnection.On("RoundEnded", () =>
             {
-                roundTimerInMs = 0;
+                timer.Stop();
                 isRoundActive = false;
+                InvokeAsync(() => StateHasChanged());
+            });
+
+            HubConnection.On<int>("ScoreUpdated", score =>
+            {
+                tableScore = score;
                 InvokeAsync(() => StateHasChanged());
             });
 
@@ -100,6 +114,13 @@
                 await HubConnection.SendAsync("SendAnswer", ans);
 
             });
+
+            timer.Elapsed += (o, e) =>
+            {
+                if (roundDuration >= 0) roundDuration--;
+
+                InvokeAsync(() => StateHasChanged());
+            };
         }
         else
         {

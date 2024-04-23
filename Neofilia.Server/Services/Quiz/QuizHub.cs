@@ -50,11 +50,11 @@ public class QuizHub : Hub
         
         var groupKey = tableId.Value.ToString();
 
-        await Groups.AddToGroupAsync(Context.ConnectionId, groupKey);
+        await Groups.AddToGroupAsync(Context.ConnectionId, groupKey);        
 
-        var test = new TableDto("test");
-
-        await Clients.Groups(groupKey).SendAsync("UserJoined", test);       
+        await Clients.Groups(groupKey).SendAsync(
+            "UserJoined",
+            new PartecipantDto(userName.Value));       
     }
     
     public async Task SendAnswer(bool answer)
@@ -93,3 +93,4 @@ public class QuizHub : Hub
 
 //empty dto for demo purpose
 public record TableDto(string Test);
+public record PartecipantDto(string UserName);

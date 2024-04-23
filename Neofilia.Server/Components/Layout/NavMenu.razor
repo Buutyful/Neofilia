@@ -29,7 +29,21 @@
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
             </NavLink>
         </div>
-
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="game?localId=1&tableId=1">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Test Table 1 Local 1
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="game?localId=1&tableId=2">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Test Table 2 Local 1
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="game?localId=2&tableId=1">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Test Table 1 Local 2
+            </NavLink>
+        </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="auth">
                 <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
@@ -38,6 +52,11 @@
 
         <AuthorizeView>
             <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="locals">
+                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Locals/Manage
+                    </NavLink>
+                </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Manage">
                         <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
