@@ -110,21 +110,13 @@ else
         //TODO: implement event properly, now its just testing porpuse
         if (_table is not null) _table = null;
 
-        var errorOrTable = await _hubConnection!.InvokeAsync<ErrorOr<Table>>(
+        await _hubConnection!.InvokeAsync<ErrorOr<Table>>(
             "GetTable",
              new LocalId(LocalId),
-             new TableId(TableId));
-
-        if (errorOrTable.IsError) _message = errorOrTable.FirstError.Description;
-        else
-        {
-            //TODO: BREAKING this doesnt return the value for some reason even if the table is returned correctly from hub, errorOr problem?
-            _table = errorOrTable.Value;
-            _table.RewardGenerated += (o, e) =>
-            {
-                _reward = true;
-            };
-        }
+             new TableId(TableId))
+             .Switch(
+             val => _table = val,
+             err => _message = string.Join(", ", err.Select(e => e.Description)));    
     }
     private string HubUrlBuilder() => navigationManager.BaseUri + QuizHub.HubUrl;
     private HubConnection ConnetionBuilder() => new HubConnectionBuilder()
