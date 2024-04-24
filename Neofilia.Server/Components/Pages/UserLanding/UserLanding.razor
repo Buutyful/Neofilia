@@ -102,20 +102,32 @@ else
             await _hubConnection.StopAsync();
             await _hubConnection.DisposeAsync();
         }
+        if(_table is not null)
+        {
+            _table.RewardGenerated -= OnRewardGenerated;
+        }
         await Task.CompletedTask;
     }
 
     private async Task GetTable()
-    {
-        //TODO: implement event properly, now its just testing porpuse
-        if (_table is not null) _table = null;
+    {        
+        if (_table is not null)
+        {
+            _table.RewardGenerated -= OnRewardGenerated;
+            _table = null;
+        }
 
-        await _hubConnection!.InvokeAsync<ErrorOr<Table>>(
+        var table = await _hubConnection!.InvokeAsync<ErrorOr<Table>>(
             "GetTable",
              new LocalId(LocalId),
-             new TableId(TableId))
-             .Switch(
-             val => _table = val,
+             new TableId(TableId));
+
+         table.Switch(
+             val =>
+             {
+                 _table = val;
+                 _table.RewardGenerated += OnRewardGenerated;
+             },
              err => _message = string.Join(", ", err.Select(e => e.Description)));    
     }
     private string HubUrlBuilder() => navigationManager.BaseUri + QuizHub.HubUrl;
@@ -123,4 +135,13 @@ else
                 .WithUrl(HubUrlBuilder())
                 .Build();
 
+    private void OnRewardGenerated(Object? sender, RewardGeneratedEvent? e)
+    {
+        //TODO: implement this properly, add behavior
+        _reward = true;
+    }
+    private void OnRewardRedeemed()
+    {
+        _reward = true;
+    }
 }

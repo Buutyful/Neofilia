@@ -87,7 +87,12 @@ public class QuizHub : Hub
                 description: "partecipant has joined a different table than the one requested");
         }
         var table = Locals.FirstOrDefault(l => l.Id.Equals(localId))!
-                    .Tables.First(t => t.Id.Equals(tableId));
+                    .Tables.FirstOrDefault(t => t.Id.Equals(tableId));
+        if (table is null)
+        {
+            return Error.NotFound(
+                description: "selected table was not found");
+        }
         return table;
     }
 
